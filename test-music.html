@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player Test</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles/music-player.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Poppins', sans-serif;
+        }
+        .test-container {
+            text-align: center;
+        }
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .instructions {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .instructions h2 {
+            color: #4ecdc4;
+            margin-bottom: 1rem;
+        }
+        .instructions ul {
+            text-align: left;
+            line-height: 2;
+        }
+        .instructions li {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🎵 Music Player Test</h1>
+        <div class="instructions">
+            <h2>Test Instructions:</h2>
+            <ul>
+                <li>✅ Look at bottom-right corner</li>
+                <li>✅ Click <strong>Play button (▶)</strong> - Music should start</li>
+                <li>✅ Click <strong>Pause button (⏸)</strong> - Music should stop</li>
+                <li>✅ Click <strong>Next button (▶)</strong> - Should switch to next track</li>
+                <li>✅ Click <strong>Previous button (◀)</strong> - Should go back</li>
+                <li>✅ Click <strong>List button (☰)</strong> - Menu should popup</li>
+                <li>✅ Click any track in menu - Should switch and close menu</li>
+            </ul>
+            <p style="margin-top: 1rem; color: #4ecdc4;">
+                <strong>Check browser console (F12) for any errors!</strong>
+            </p>
+        </div>
+    </div>
+
+    <!-- Floating Music Player with Track Selection -->
+    <div class="music-player" id="musicPlayer">
+        <i class="fas fa-music"></i>
+        <span>Chill Lofi</span>
+        <button id="musicPrev" title="Previous Track">
+            <i class="fas fa-backward"></i>
+        </button>
+        <button id="musicToggle" title="Play/Pause">
+            <i class="fas fa-play"></i>
+        </button>
+        <button id="musicNext" title="Next Track">
+            <i class="fas fa-forward"></i>
+        </button>
+        <button id="musicSelect" title="Select Track">
+            <i class="fas fa-list"></i>
+        </button>
+    </div>
+    
+    <!-- Track Selector Popup -->
+    <div id="trackSelector">
+        <h3>🎵 Select Music</h3>
+        <div class="track-option active" onclick="window.musicPlayer.selectTrack(0)">
+            <i class="fas fa-music"></i>
+            <span>Chill Lofi</span>
+        </div>
+        <div class="track-option" onclick="window.musicPlayer.selectTrack(1)">
+            <i class="fas fa-brain"></i>
+            <span>Focus Music</span>
+        </div>
+        <div class="track-option" onclick="window.musicPlayer.selectTrack(2)">
+            <i class="fas fa-book"></i>
+            <span>Study Beats</span>
+        </div>
+        <div class="track-option" onclick="window.musicPlayer.selectTrack(3)">
+            <i class="fas fa-piano"></i>
+            <span>Relaxing Piano</span>
+        </div>
+        <div class="track-option" onclick="window.musicPlayer.selectTrack(4)">
+            <i class="fas fa-cloud"></i>
+            <span>Ambient Chill</span>
+        </div>
+        <div class="track-option" onclick="window.musicPlayer.selectTrack(5)">
+            <i class="fas fa-bolt"></i>
+            <span>Upbeat Energy</span>
+        </div>
+    </div>
+
+    <script src="scripts/music.js"></script>
+</body>
+</html>

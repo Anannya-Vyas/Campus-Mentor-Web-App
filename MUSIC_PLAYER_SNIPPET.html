@@ -1,0 +1,67 @@
+<!-- ========================================= -->
+<!-- COPY THIS ENTIRE BLOCK TO EVERY PAGE -->
+<!-- Place it right after <body> tag -->
+<!-- ========================================= -->
+
+<!-- Music Player with Track Selection -->
+<div class="music-player" id="musicPlayer">
+    <i class="fas fa-music"></i>
+    <span>Chill Lofi</span>
+    <button id="musicPrev" title="Previous Track">
+        <i class="fas fa-backward"></i>
+    </button>
+    <button id="musicToggle" title="Play/Pause">
+        <i class="fas fa-play"></i>
+    </button>
+    <button id="musicNext" title="Next Track">
+        <i class="fas fa-forward"></i>
+    </button>
+    <button id="musicSelect" title="Select Track">
+        <i class="fas fa-list"></i>
+    </button>
+</div>
+
+<!-- Track Selector Popup -->
+<div id="trackSelector">
+    <h3>🎵 Select Music</h3>
+    <div class="track-option active" onclick="window.musicPlayer.selectTrack(0)">
+        <i class="fas fa-music"></i>
+        <span>Chill Lofi</span>
+    </div>
+    <div class="track-option" onclick="window.musicPlayer.selectTrack(1)">
+        <i class="fas fa-brain"></i>
+        <span>Focus Music</span>
+    </div>
+    <div class="track-option" onclick="window.musicPlayer.selectTrack(2)">
+        <i class="fas fa-book"></i>
+        <span>Study Beats</span>
+    </div>
+    <div class="track-option" onclick="window.musicPlayer.selectTrack(3)">
+        <i class="fas fa-piano"></i>
+        <span>Relaxing Piano</span>
+    </div>
+    <div class="track-option" onclick="window.musicPlayer.selectTrack(4)">
+        <i class="fas fa-cloud"></i>
+        <span>Ambient Chill</span>
+    </div>
+    <div class="track-option" onclick="window.musicPlayer.selectTrack(5)">
+        <i class="fas fa-bolt"></i>
+        <span>Upbeat Energy</span>
+    </div>
+</div>
+
+<!-- ========================================= -->
+<!-- ALSO ADD THESE IN <head> SECTION -->
+<!-- ========================================= -->
+
+<link rel="stylesheet" href="../styles/music-player.css">
+
+<!-- ========================================= -->
+<!-- ALSO ADD THIS BEFORE </body> TAG -->
+<!-- ========================================= -->
+
+<script src="../scripts/music.js"></script>
+
+<!-- ========================================= -->
+<!-- DONE! Music player will work on that page -->
+<!-- ========================================= -->

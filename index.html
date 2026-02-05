@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Mentor - Learn & Earn</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles/music-player.css">
+    <link rel="stylesheet" href="styles/vibrant-theme.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #000000;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* ========== LOADING SPLASH SCREEN ========== */
+        #loadingSplash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            animation: fadeOut 0.5s ease 4s forwards;
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+
+        .spider-logo {
+            font-size: 8rem;
+            animation: spiderBounce 1s infinite;
+            filter: drop-shadow(0 0 20px rgba(255,255,255,0.5));
+        }
+
+        @keyframes spiderBounce {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(10deg); }
+        }
+
+        .loading-text {
+            font-size: 2.5rem;
+            margin-top: 1rem;
+            color: white;
+            font-weight: bold;
+            text-shadow: 0 0 20px rgba(255,255,255,0.5);
+        }
+
+        .loading-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.9);
+            margin-top: 0.5rem;
+        }
+
+        .creators {
+            font-size: 1rem;
+            color: rgba(255,255,255,0.8);
+            margin-top: 1.5rem;
+            font-style: italic;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .loading-bar {
+            width: 300px;
+            height: 4px;
+            background: #333;
+            border-radius: 10px;
+            margin-top: 2rem;
+            overflow: hidden;
+        }
+
+        .loading-progress {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #fff, #888);
+            animation: loadProgress 4s ease forwards;
+        }
+
+        @keyframes loadProgress {
+            to { width: 100%; }
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        #mainContent {
+            opacity: 0;
+            animation: fadeIn 0.5s ease 4.5s forwards;
+            position: relative;
+            z-index: 10;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: 2rem;
+            z-index: 10;
+        }
+
+        /* Animated Spider Web Background */
+        .web-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: webMove 20s linear infinite;
+        }
+
+        @keyframes webMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        /* Cute Studying Spiders */
+        .spider {
+            position: absolute;
+            font-size: 3rem;
+            animation: spiderWalk 15s linear infinite;
+        }
+
+        .spider-1 { top: 10%; left: -10%; animation-delay: 0s; }
+        .spider-2 { top: 30%; left: -10%; animation-delay: 3s; }
+        .spider-3 { top: 50%; left: -10%; animation-delay: 6s; }
+        .spider-4 { top: 70%; left: -10%; animation-delay: 9s; }
+        .spider-5 { top: 90%; left: -10%; animation-delay: 12s; }
+
+        @keyframes spiderWalk {
+            0% { left: -10%; transform: rotate(0deg); }
+            50% { transform: rotate(180deg); }
+            100% { left: 110%; transform: rotate(360deg); }
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 100;
+            max-width: 800px;
+            position: relative;
+        }
+
+        .main-logo {
+            font-size: 6rem;
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, #fff, #888, #fff);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s infinite;
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            color: #888;
+            margin-bottom: 3rem;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1000;
+        }
+
+        .btn {
+            padding: 18px 50px;
+            font-size: 1.2rem;
+            border: 2px solid white;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1001;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: white;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-login {
+            background: white;
+            color: black;
+        }
+
+        .btn-login:hover {
+            color: white;
+            background: transparent;
+        }
+
+        .btn-signup {
+            background: transparent;
+            color: white;
+        }
+
+        .btn-signup:hover {
+            color: black;
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 5rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            background: linear-gradient(90deg, #fff, #888);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .features-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .main-logo {
+                font-size: 4rem;
+            }
+
+            .tagline {
+                font-size: 1.2rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .auth-buttons {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .features-section {
+                padding: 3rem 1rem;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .main-logo {
+                font-size: 3rem;
+            }
+
+            .tagline {
+                font-size: 1rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .feature-card {
+                padding: 1.5rem;
+            }
+
+            .feature-icon {
+                font-size: 2.5rem;
+            }
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            border: 1px solid #333;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .feature-card:hover::before {
+            left: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: white;
+            box-shadow: 0 10px 40px rgba(255,255,255,0.2);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: #888;
+            line-height: 1.6;
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator i {
+            font-size: 2rem;
+            color: white;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 1px solid #333;
+            color: #888;
+        }
+    </style>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Firebase Configuration -->
+    <script src="scripts/firebase-config.js"></script>
+    <script src="scripts/firebase-service.js"></script>
+</head>
+<body>
+    <!-- Vibrant Background -->
+    <div class="vibrant-bg"></div>
+    <div class="glitter-web"></div>
+
+    <!-- Cute Studying Spiders -->
+    <div class="cute-spider cute-spider-1">🕷️📚</div>
+    <div class="cute-spider cute-spider-2">🕷️✏️</div>
+    <div class="cute-spider cute-spider-3">🕷️💻</div>
+    <div class="cute-spider cute-spider-4">🕷️💰</div>
+    <div class="cute-spider cute-spider-5">🕷️🎓</div>
+
+    <!-- Loading Splash Screen (4 seconds) -->
+    <div id="loadingSplash">
+        <div class="spider-logo study-spider">🕷️📚</div>
+        <div class="loading-text">Campus Mentor</div>
+        <div class="loading-subtitle">Learn & Earn Together</div>
+        <div class="creators">Created by Riddhi Agarwal & Anannya Vyas</div>
+        <div class="loading-bar">
+            <div class="loading-progress"></div>
+        </div>
+    </div>
+
+    <!-- Main Content (appears after 4 seconds) -->
+    <div id="mainContent">
+        <!-- Music Player -->
+        <div class="music-player" id="musicPlayer">
+            <i class="fas fa-music"></i>
+            <span>Chill Lofi</span>
+            <button id="musicPrev"><i class="fas fa-backward"></i></button>
+            <button id="musicToggle"><i class="fas fa-play"></i></button>
+            <button id="musicNext"><i class="fas fa-forward"></i></button>
+            <button id="musicSelect"><i class="fas fa-list"></i></button>
+        </div>
+
+        <!-- Track Selector -->
+        <div id="trackSelector">
+            <h3>🎵 Select Music</h3>
+            <div class="track-option active" onclick="window.musicPlayer.selectTrack(0)">
+                <i class="fas fa-music"></i><span>Chill Lofi</span>
+            </div>
+            <div class="track-option" onclick="window.musicPlayer.selectTrack(1)">
+                <i class="fas fa-brain"></i><span>Focus Music</span>
+            </div>
+            <div class="track-option" onclick="window.musicPlayer.selectTrack(2)">
+                <i class="fas fa-book"></i><span>Study Beats</span>
+            </div>
+            <div class="track-option" onclick="window.musicPlayer.selectTrack(3)">
+                <i class="fas fa-piano"></i><span>Relaxing Piano</span>
+            </div>
+            <div class="track-option" onclick="window.musicPlayer.selectTrack(4)">
+                <i class="fas fa-cloud"></i><span>Ambient Chill</span>
+            </div>
+            <div class="track-option" onclick="window.musicPlayer.selectTrack(5)">
+                <i class="fas fa-bolt"></i><span>Upbeat Energy</span>
+            </div>
+        </div>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="web-bg"></div>
+            
+            <!-- Cute Studying Spiders -->
+            <div class="spider spider-1">🕷️📚</div>
+            <div class="spider spider-2">🕷️✏️</div>
+            <div class="spider spider-3">🕷️💻</div>
+            <div class="spider spider-4">🕷️📖</div>
+            <div class="spider spider-5">🕷️🎓</div>
+
+            <div class="hero-content">
+                <div class="main-logo">🕷️</div>
+                <h1>Campus Mentor</h1>
+                <p class="tagline">Where Students Learn & Earn Together</p>
+                <p style="color:#4ecdc4; font-size:1.1rem; margin-top:1rem;">
+                    🎓 Connect with Expert Teachers | 💰 Track Your Expenses | 🤖 AI-Powered Learning
+                </p>
+                <p style="color:#888; font-size:0.95rem; margin-top:0.5rem;">
+                    Created by <strong style="color:#667eea;">Riddhi Agarwal</strong> & <strong style="color:#764ba2;">Anannya Vyas</strong>
+                </p>
+                
+                <div class="auth-buttons">
+                    <a href="pages/login.html" class="btn btn-login vibrant-btn">
+                        <span><i class="fas fa-sign-in-alt"></i> Login</span>
+                    </a>
+                    <a href="pages/signup.html" class="btn btn-signup vibrant-btn">
+                        <span><i class="fas fa-user-plus"></i> Sign Up</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="scroll-indicator">
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features-section">
+            <h2 class="section-title">🎓 All Features</h2>
+            
+            <div class="features-grid">
+                <div class="feature-card vibrant-card">
+                    <div class="feature-icon glowing-icon">🔍</div>
+                    <h3 class="neon-text">Find Teachers</h3>
+                    <p>Connect with expert teachers for any subject</p>
+                </div>
+
+                <div class="feature-card vibrant-card">
+                    <div class="feature-icon glowing-icon">📹</div>
+                    <h3 class="neon-text">Video Calls</h3>
+                    <p>Live one-on-one video sessions</p>
+                </div>
+
+                <div class="feature-card vibrant-card">
+                    <div class="feature-icon glowing-icon study-spider">🕷️🤖</div>
+                    <h3 class="neon-text">Spidro AI</h3>
+                    <p>AI-powered learning assistant</p>
+                </div>
+
+                <div class="feature-card vibrant-card">
+                    <div class="feature-icon glowing-icon money-spider">🕷️💰</div>
+                    <h3 class="neon-text">Marketplace</h3>
+                    <p>Buy & sell notes and books</p>
+                </div>
+
+                <div class="feature-card vibrant-card">
+                    <div class="feature-icon glowing-icon">✅</div>
+                    <h3 class="neon-text">To-Do List</h3>
+                    <p>Manage tasks and assignments</p>
+                </div>
+
+                <div class="feature-card vibrant-card">
+                    <div class="feature-icon glowing-icon">🍎</div>
+                    <h3 class="neon-text">Diet Planner</h3>
+                    <p>Personalized meal plans</p>
+                </div>
+
+                <div class="feature-card vibrant-card">
+                    <div class="feature-icon glowing-icon">🎮</div>
+                    <h3 class="neon-text">Mind Games</h3>
+                    <p>Refresh your mind with games</p>
+                </div>
+
+                <div class="feature-card vibrant-card">
+                    <div class="feature-icon glowing-icon">⏰</div>
+                    <h3 class="neon-text">Smart Alarm</h3>
+                    <p>Never miss study sessions</p>
+                </div>
+
+                <div class="feature-card vibrant-card">
+                    <div class="feature-icon glowing-icon">💬</div>
+                    <h3 class="neon-text">Real-Time Chat</h3>
+                    <p>Message teachers instantly</p>
+                </div>
+
+                <div class="feature-card vibrant-card">
+                    <div class="feature-icon glowing-icon study-spider">🕷️👨‍🏫</div>
+                    <h3 class="neon-text">Teacher Profiles</h3>
+                    <p>Detailed teacher information</p>
+                </div>
+
+                <div class="feature-card vibrant-card">
+                    <div class="feature-icon glowing-icon">💰</div>
+                    <h3 class="neon-text">Expense Tracker</h3>
+                    <p>Track your daily expenses and manage budget</p>
+                </div>
+
+                <div class="feature-card vibrant-card">
+                    <div class="feature-icon glowing-icon">👥</div>
+                    <h3 class="neon-text">Find Students</h3>
+                    <p>Connect with fellow students and make friends</p>
+                </div>
+
+                <div class="feature-card vibrant-card">
+                    <div class="feature-icon glowing-icon">🎵</div>
+                    <h3 class="neon-text">Study Music</h3>
+                    <p>Focus better with curated study playlists</p>
+                </div>
+
+                <div class="feature-card vibrant-card">
+                    <div class="feature-icon glowing-icon">👨‍🏫</div>
+                    <h3 class="neon-text">All Teachers</h3>
+                    <p>Browse complete teacher directory</p>
+                </div>
+
+                <div class="feature-card vibrant-card">
+                    <div class="feature-icon glowing-icon">🤝</div>
+                    <h3 class="neon-text">Friend Requests</h3>
+                    <p>Manage your friend connections</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>© 2024 Campus Mentor | Built with 🕷️ for Students</p>
+        </footer>
+    </div>
+
+    <script src="scripts/music.js"></script>
+    <script>
+        // Ensure buttons are clickable
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginBtn = document.querySelector('a[href="pages/login.html"]');
+            const signupBtn = document.querySelector('a[href="pages/signup.html"]');
+            
+            if (loginBtn) {
+                loginBtn.style.cursor = 'pointer';
+                loginBtn.style.pointerEvents = 'auto';
+                console.log('✅ Login button ready');
+            }
+            
+            if (signupBtn) {
+                signupBtn.style.cursor = 'pointer';
+                signupBtn.style.pointerEvents = 'auto';
+                console.log('✅ Signup button ready');
+            }
+        });
+        
+        // Initialize Firebase
+        if (typeof initializeFirebase === 'function') {
+            initializeFirebase();
+        }
+    </script>
+</body>
+</html>
