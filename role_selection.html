@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Choose Your Path</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(45deg, #000000, #1a0000, #000000);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Arial Black', sans-serif;
+        }
+        
+        .container {
+            text-align: center;
+            background: rgba(0,0,0,0.8);
+            padding: 40px;
+            border-radius: 20px;
+            border: 3px solid #ff0000;
+            box-shadow: 0 0 50px #ff0000;
+        }
+        
+        .heading {
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .heading h1 {
+            font-size: 40px;
+            background: linear-gradient(45deg, #ff0000, #ffff00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .options {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+        }
+        
+        .option {
+            background: linear-gradient(45deg, #ff0000, #ff00ff);
+            padding: 30px;
+            border-radius: 15px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 200px;
+            border: 2px solid transparent;
+        }
+        
+        .option:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px currentColor;
+            border-color: #ffff00;
+        }
+        
+        .option h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="heading">
+            <h1>Learn from Your Best Campus Friends</h1>
+            <p style="color: #ffff00;">Choose your role to begin the journey</p>
+        </div>
+        
+        <div class="options">
+            <div class="option" onclick="location.href='/student-register'">
+                <h2>🎓 Learner</h2>
+                <p>I want to learn from seniors</p>
+            </div>
+            
+            <div class="option" onclick="location.href='/teacher-register'">
+                <h2>👨‍🏫 Teacher</h2>
+                <p>I want to teach juniors</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

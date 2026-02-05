@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spidro - AI Chatbot</title>
+    <style>
+        :root {
+            --spider-black: #0A0A0A;
+            --spider-pink: #FF2D95;
+            --spider-yellow: #FFD700;
+            --web-gray: #1A1A1A;
+            --text-light: #F0F0F0;
+            --accent-pink: #FF4DA6;
+            --accent-yellow: #FFE44D;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--spider-black);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 45, 149, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 20%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Spider web background effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, var(--web-gray) 1px, transparent 1px) 0 0 / 30px 30px,
+                linear-gradient(0deg, var(--web-gray) 1px, transparent 1px) 0 0 / 30px 30px;
+            opacity: 0.2;
+            z-index: -1;
+        }
+        
+        .chat-container {
+            width: 90%;
+            max-width: 800px;
+            height: 80vh;
+            background: rgba(26, 26, 26, 0.9);
+            border-radius: 15px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 30px rgba(255, 45, 149, 0.3);
+            border: 1px solid var(--spider-pink);
+        }
+        
+        .chat-header {
+            background: linear-gradient(90deg, var(--spider-black), var(--web-gray));
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            border-bottom: 2px solid var(--spider-pink);
+            position: relative;
+        }
+        
+        .spidro-avatar {
+            width: 50px;
+            height: 50px;
+            background: var(--spider-pink);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 1rem;
+            animation: pulse 2s infinite;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .spidro-avatar::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, var(--spider-yellow) 0%, transparent 70%);
+            opacity: 0.3;
+        }
+        
+        .spidro-avatar .spider-icon {
+            font-size: 1.8rem;
+            z-index: 1;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 45, 149, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 45, 149, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 45, 149, 0); }
+        }
+        
+        .chat-header-info h1 {
+            color: var(--spider-pink);
+            font-size: 1.5rem;
+            margin-bottom: 0.2rem;
+        }
+        
+        .chat-header-info p {
+            color: var(--spider-yellow);
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .status-indicator {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            background: rgba(0, 200, 0, 0.2);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #00FF00;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            animation: blink 2s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 1rem;
+            border-radius: 15px;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .user-message {
+            align-self: flex-end;
+            background: linear-gradient(135deg, var(--spider-pink), var(--accent-pink));
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .bot-message {
+            align-self: flex-start;
+            background: rgba(40, 40, 40, 0.8);
+            border: 1px solid var(--spider-yellow);
+            border-bottom-left-radius: 5px;
+        }
+        
+        .bot-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -10px;
+            width: 0;
+            height: 0;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-right: 10px solid var(--spider-yellow);
+        }
+        
+        .user-message::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -10px;
+            width: 0;
+            height: 0;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-left: 10px solid var(--accent-pink);
+        }
+        
+        .message-time {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            margin-top: 0.5rem;
+            text-align: right;
+        }
+        
+        .chat-input-container {
+            padding: 1rem;
+            border-top: 1px solid #333;
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: 1px solid #444;
+            border-radius: 25px;
+            background: var(--web-gray);
+            color: var(--text-light);
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        .chat-input:focus {
+            border-color: var(--spider-pink);
+            box-shadow: 0 0 10px rgba(255, 45, 149, 0.3);
+        }
+        
+        .send-button {
+            background: linear-gradient(135deg, var(--spider-pink), var(--accent-pink));
+            color: white;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .send-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(255, 45, 149, 0.5);
+        }
+        
+        .typing-indicator {
+            display: none;
+            align-self: flex-start;
+            background: rgba(40, 40, 40, 0.8);
+            border: 1px solid var(--spider-yellow);
+            border-radius: 15px;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .typing-dots {
+            display: flex;
+            gap: 3px;
+        }
+        
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--spider-yellow);
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Quick reply buttons */
+        .quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .quick-reply {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid var(--spider-yellow);
+            color: var(--spider-yellow);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .quick-reply:hover {
+            background: rgba(255, 215, 0, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        /* Spider decoration */
+        .spider {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            background: var(--spider-black);
+            border-radius: 50%;
+            box-shadow: 0 0 0 5px var(--spider-pink);
+            animation: crawl 40s linear infinite;
+            z-index: -1;
+        }
+        
+        .spider::before, .spider::after {
+            content: '';
+            position: absolute;
+            background: var(--spider-pink);
+        }
+        
+        .spider::before {
+            width: 40px;
+            height: 5px;
+            top: 5px;
+            left: -5px;
+        }
+        
+        .spider::after {
+            width: 40px;
+            height: 5px;
+            top: 20px;
+            left: -5px;
+        }
+        
+        .spider-legs {
+            position: absolute;
+            width: 60px;
+            height: 40px;
+            top: -5px;
+            left: -15px;
+        }
+        
+        .spider-leg {
+            position: absolute;
+            width: 30px;
+            height: 5px;
+            background: var(--spider-pink);
+            border-radius: 5px;
+        }
+        
+        .spider-leg:nth-child(1) { transform: rotate(30deg); top: 5px; left: 0; }
+        .spider-leg:nth-child(2) { transform: rotate(-30deg); top: 5px; right: 0; }
+        .spider-leg:nth-child(3) { transform: rotate(45deg); top: 15px; left: -5px; }
+        .spider-leg:nth-child(4) { transform: rotate(-45deg); top: 15px; right: -5px; }
+        .spider-leg:nth-child(5) { transform: rotate(60deg); top: 25px; left: -10px; }
+        .spider-leg:nth-child(6) { transform: rotate(-60deg); top: 25px; right: -10px; }
+        .spider-leg:nth-child(7) { transform: rotate(75deg); top: 35px; left: -15px; }
+        .spider-leg:nth-child(8) { transform: rotate(-75deg); top: 35px; right: -15px; }
+        
+        @keyframes crawl {
+            0% { top: -50px; left: 0%; }
+            25% { top: 30%; left: 95%; transform: scaleX(1); }
+            26% { transform: scaleX(-1); }
+            50% { top: 95%; left: 50%; transform: scaleX(-1); }
+            51% { transform: scaleX(1); }
+            75% { top: 60%; left: 0%; transform: scaleX(1); }
+            76% { transform: scaleX(-1); }
+            100% { top: -50px; left: 30%; transform: scaleX(-1); }
+        }
+        
+        /* Responsive design */
+        @media (max-width: 600px) {
+            .chat-container {
+                width: 95%;
+                height: 85vh;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+            
+            .chat-header {
+                padding: 0.8rem;
+            }
+            
+            .spidro-avatar {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .chat-header-info h1 {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated spider decoration -->
+    <div class="spider">
+        <div class="spider-legs">
+            <div class="spider-leg"></div>
+            <div class="spider-leg"></div>
+            <div class="spider-leg"></div>
+            <div class="spider-leg"></div>
+            <div class="spider-leg"></div>
+            <div class="spider-leg"></div>
+            <div class="spider-leg"></div>
+            <div class="spider-leg"></div>
+        </div>
+    </div>
+    
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="spidro-avatar">
+                <div class="spider-icon">🕷</div>
+            </div>
+            <div class="chat-header-info">
+                <h1>Spidro</h1>
+                <p>Your friendly AI assistant</p>
+            </div>
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>Online</span>
+            </div>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot-message">
+                <div>Hey there! I'm Spidro, your AI assistant. How can I help you today?</div>
+                <div class="quick-replies">
+                    <div class="quick-reply" onclick="quickReply('Tell me a joke')">Tell me a joke</div>
+                    <div class="quick-reply" onclick="quickReply('What can you do?')">What can you do?</div>
+                    <div class="quick-reply" onclick="quickReply('How are you?')">How are you?</div>
+                </div>
+                <div class="message-time" id="messageTime">Just now</div>
+            </div>
+        </div>
+        
+        <div class="typing-indicator" id="typingIndicator">
+            <div class="typing-dots">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+        </div>
+        
+        <div class="chat-input-container">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Type your message here...">
+            <button class="send-button" id="sendButton">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22 2L11 13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const sendButton = document.getElementById('sendButton');
+        const typingIndicator = document.getElementById('typingIndicator');
+        
+        // Conversation history
+        let conversationHistory = [];
+        
+        // Initialize the chatbot
+        function init() {
+            setupEventListeners();
+            // Add welcome message if no previous conversation
+            if (conversationHistory.length === 0) {
+                addMessage("Hey there! I'm Spidro, your AI assistant. How can I help you today?", 'bot');
+            }
+        }
+        
+        // Set up event listeners
+        function setupEventListeners() {
+            sendButton.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        }
+        
+        // Send a message
+        function sendMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+            
+            addMessage(message, 'user');
+            chatInput.value = '';
+            
+            // Show typing indicator
+            typingIndicator.style.display = 'block';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Simulate AI thinking time
+            setTimeout(() => {
+                typingIndicator.style.display = 'none';
+                const response = generateResponse(message);
+                addMessage(response, 'bot');
+            }, 1000 + Math.random() * 1000);
+        }
+        
+        // Quick reply function
+        function quickReply(message) {
+            chatInput.value = message;
+            sendMessage();
+        }
+        
+        // Add a message to the chat
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = message ${sender}-message;
+            
+            const messageContent = document.createElement('div');
+            messageContent.innerHTML = text;
+            messageDiv.appendChild(messageContent);
+            
+            // Add quick replies for bot messages
+            if (sender === 'bot') {
+                const quickReplies = generateQuickReplies(text);
+                if (quickReplies) {
+                    const quickRepliesDiv = document.createElement('div');
+                    quickRepliesDiv.className = 'quick-replies';
+                    
+                    quickReplies.forEach(reply => {
+                        const quickReply = document.createElement('div');
+                        quickReply.className = 'quick-reply';
+                        quickReply.textContent = reply;
+                        quickReply.onclick = () => quickReply(reply);
+                        quickRepliesDiv.appendChild(quickReply);
+                    });
+                    
+                    messageDiv.appendChild(quickRepliesDiv);
+                }
+            }
+            
+            const timeDiv = document.createElement('div');
+            timeDiv.className = 'message-time';
+            timeDiv.textContent = getCurrentTime();
+            messageDiv.appendChild(timeDiv);
+            
+            chatMessages.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Add to conversation history
+            conversationHistory.push({ sender, text, time: new Date() });
+        }
+        
+        // Generate a response based on user input
+        function generateResponse(userMessage) {
+            const message = userMessage.toLowerCase();
+            
+            // Greetings
+            if (message.includes('hello') || message.includes('hi') || message.includes('hey')) {
+                return getRandomResponse([
+                    "Hello there! How's your day going?",
+                    "Hey! Nice to see you. What's on your mind?",
+                    "Hi! I'm Spidro, ready to help with anything you need."
+                ]);
+            }
+            
+            // How are you
+            if (message.includes('how are you')) {
+                return getRandomResponse([
+                    "I'm doing great! Just hanging out in my web, ready to help you.",
+                    "I'm fantastic! Being an AI spider has its perks. How are you?",
+                    "I'm doing well, thanks for asking! What about you?"
+                ]);
+            }
+            
+            // Jokes
+            if (message.includes('joke') || message.includes('funny')) {
+                return getRandomResponse([
+                    "Why don't spiders have friends? Because they're always getting caught in their own webs!",
+                    "What do you call a spider with no legs? A raisin!",
+                    "Why was the spider so good at computers? It had a great web browser!",
+                    "What's a spider's favorite subject in school? Web design!"
+                ]);
+            }
+            
+            // Capabilities
+            if (message.includes('what can you do') || message.includes('help')) {
+                return "I can chat with you, tell jokes, answer questions, and help you with various tasks. Just ask me anything!";
+            }
+            
+            // Weather
+            if (message.includes('weather')) {
+                return "I'm not connected to weather services, but I can tell you it's always a good day for spinning webs!";
+            }
+            
+            // Time
+            if (message.includes('time')) {
+                return The current time is ${new Date().toLocaleTimeString()}.;
+            }
+            
+            // Name
+            if (message.includes('your name') || message.includes('who are you')) {
+                return "I'm Spidro, your friendly AI spider assistant! I'm here to help with anything you need.";
+            }
+            
+            // Goodbye
+            if (message.includes('bye') || message.includes('goodbye') || message.includes('see you')) {
+                return getRandomResponse([
+                    "Bye! Don't get tangled up in anything!",
+                    "See you later! Come back anytime to chat.",
+                    "Goodbye! Remember, I'm always here in my web if you need me."
+                ]);
+            }
+            
+            // Default responses
+            return getRandomResponse([
+                "That's interesting! Tell me more about that.",
+                "I see. What else would you like to talk about?",
+                "Fascinating! I'm learning so much from our conversation.",
+                "Hmm, I'm not sure I understand completely. Could you elaborate?",
+                "That's a great point! What are your thoughts on this?",
+                "I'm here to help with anything you need. What's on your mind?"
+            ]);
+        }
+        
+        // Generate quick replies based on the last message
+        function generateQuickReplies(lastMessage) {
+            const message = lastMessage.toLowerCase();
+            
+            if (message.includes('how are you')) {
+                return ["I'm good!", "Could be better", "Great, thanks!"];
+            }
+            
+            if (message.includes('joke')) {
+                return ["Tell me another one", "That was funny!", "More jokes please"];
+            }
+            
+            if (message.includes('help') || message.includes('what can you do')) {
+                return ["Tell me a joke", "What's the time?", "How are you?"];
+            }
+            
+            // Default quick replies
+            return ["Tell me a joke", "What can you do?", "How are you?"];
+        }
+        
+        // Helper function to get a random response from an array
+        function getRandomResponse(responses) {
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+        
+        // Get current time in HH:MM format
+        function getCurrentTime() {
+            return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+        
+        // Initialize the chatbot when the page loads
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

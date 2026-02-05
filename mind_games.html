@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpiderZen - Mind Relaxing Games</title>
+    <style>
+        :root {
+            --spider-red: #8B0000;
+            --spider-dark: #0A0A0A;
+            --web-gray: #1A1A1A;
+            --text-light: #F0F0F0;
+            --accent-red: #B22222;
+            --accent-dark: #2A0A0A;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--spider-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(139, 0, 0, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(139, 0, 0, 0.1) 0%, transparent 20%);
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Spider web background effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, var(--web-gray) 1px, transparent 1px) 0 0 / 30px 30px,
+                linear-gradient(0deg, var(--web-gray) 1px, transparent 1px) 0 0 / 30px 30px;
+            opacity: 0.2;
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            color: var(--spider-red);
+            text-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
+            margin-bottom: 0.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 10%;
+            width: 80%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--spider-red), transparent);
+        }
+        
+        .spider-icon {
+            display: inline-block;
+            margin-left: 10px;
+            animation: swing 3s infinite ease-in-out;
+        }
+        
+        @keyframes swing {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+        
+        .subtitle {
+            color: #aaa;
+            font-size: 1.3rem;
+            margin-top: 1rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.5;
+        }
+        
+        .games-container {
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
+        }
+        
+        .game-section {
+            background: rgba(26, 26, 26, 0.8);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid var(--spider-red);
+            box-shadow: 0 0 20px rgba(139, 0, 0, 0.3);
+        }
+        
+        .game-header {
+            background: linear-gradient(90deg, var(--spider-dark), var(--accent-dark));
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--spider-red);
+        }
+        
+        .game-title {
+            font-size: 2rem;
+            color: var(--spider-red);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        
+        .game-content {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .game-description {
+            color: #ccc;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            max-width: 800px;
+        }
+        
+        .game-area {
+            background: var(--web-gray);
+            border-radius: 10px;
+            padding: 2rem;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+        
+        .game-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 0.8rem 1.8rem;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background: var(--spider-red);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--accent-red);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid #444;
+            color: #ccc;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--spider-red);
+        }
+        
+        .game-status {
+            margin-top: 1rem;
+            font-weight: bold;
+            color: var(--spider-red);
+            text-align: center;
+            font-size: 1.2rem;
+        }
+        
+        /* Robot Game Styles */
+        #robotGame {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            width: 100%;
+        }
+        
+        .robot-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 1.5rem 0;
+        }
+        
+        .robot-cell {
+            width: 100px;
+            height: 100px;
+            background: #333;
+            border: 3px solid #555;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 5px;
+        }
+        
+        .robot-cell:hover {
+            background: #444;
+            border-color: var(--spider-red);
+        }
+        
+        .robot-cell.active {
+            background: var(--accent-dark);
+            border-color: var(--spider-red);
+            box-shadow: 0 0 15px rgba(139, 0, 0, 0.5);
+        }
+        
+        .robot-controls {
+            display: grid;
+            grid-template-areas: 
+                ". up ."
+                "left . right"
+                ". down .";
+            gap: 10px;
+            margin: 1rem 0;
+        }
+        
+        .robot-btn {
+            width: 80px;
+            height: 80px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #moveUp { grid-area: up; }
+        #moveDown { grid-area: down; }
+        #moveLeft { grid-area: left; }
+        #moveRight { grid-area: right; }
+        
+        /* Calculator Game Styles */
+        #calculatorGame {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            width: 100%;
+        }
+        
+        .calculator {
+            background: #222;
+            border-radius: 15px;
+            padding: 1.5rem;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .calculator-display {
+            background: #111;
+            color: var(--spider-red);
+            font-size: 2.5rem;
+            padding: 1.2rem;
+            text-align: right;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            min-height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            font-family: 'Courier New', monospace;
+            border: 1px solid #333;
+        }
+        
+        .calculator-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.8rem;
+        }
+        
+        .calc-btn {
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 1.2rem;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .calc-btn:hover {
+            background: #444;
+        }
+        
+        .calc-btn.operator {
+            background: var(--accent-dark);
+            color: var(--spider-red);
+        }
+        
+        .calc-btn.equals {
+            background: var(--spider-red);
+            color: white;
+        }
+        
+        .problem-display {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        /* Memory Game Styles */
+        #memoryGame {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            width: 100%;
+        }
+        
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 1.5rem 0;
+        }
+        
+        .memory-card {
+            width: 100px;
+            height: 100px;
+            background: #333;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            transform-style: preserve-3d;
+            border: 2px solid #555;
+        }
+        
+        .memory-card.flipped {
+            background: var(--accent-dark);
+            transform: rotateY(180deg);
+            border-color: var(--spider-red);
+        }
+        
+        .memory-card.matched {
+            background: var(--spider-red);
+            cursor: default;
+            transform: scale(0.95);
+            box-shadow: 0 0 15px rgba(139, 0, 0, 0.5);
+        }
+        
+        /* Spider decoration */
+        .spider {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            background: var(--spider-dark);
+            border-radius: 50%;
+            box-shadow: 0 0 0 5px var(--spider-red);
+            animation: crawl 60s linear infinite;
+            z-index: -1;
+        }
+        
+        .spider::before, .spider::after {
+            content: '';
+            position: absolute;
+            background: var(--spider-red);
+        }
+        
+        .spider::before {
+            width: 50px;
+            height: 6px;
+            top: 7px;
+            left: -5px;
+        }
+        
+        .spider::after {
+            width: 50px;
+            height: 6px;
+            top: 27px;
+            left: -5px;
+        }
+        
+        .spider-legs {
+            position: absolute;
+            width: 70px;
+            height: 50px;
+            top: -5px;
+            left: -15px;
+        }
+        
+        .spider-leg {
+            position: absolute;
+            width: 35px;
+            height: 6px;
+            background: var(--spider-red);
+            border-radius: 5px;
+        }
+        
+        .spider-leg:nth-child(1) { transform: rotate(30deg); top: 5px; left: 0; }
+        .spider-leg:nth-child(2) { transform: rotate(-30deg); top: 5px; right: 0; }
+        .spider-leg:nth-child(3) { transform: rotate(45deg); top: 15px; left: -5px; }
+        .spider-leg:nth-child(4) { transform: rotate(-45deg); top: 15px; right: -5px; }
+        .spider-leg:nth-child(5) { transform: rotate(60deg); top: 25px; left: -10px; }
+        .spider-leg:nth-child(6) { transform: rotate(-60deg); top: 25px; right: -10px; }
+        .spider-leg:nth-child(7) { transform: rotate(75deg); top: 35px; left: -15px; }
+        .spider-leg:nth-child(8) { transform: rotate(-75deg); top: 35px; right: -15px; }
+        
+        @keyframes crawl {
+            0% { top: -50px; left: 0%; }
+            25% { top: 20%; left: 95%; transform: scaleX(1); }
+            26% { transform: scaleX(-1); }
+            50% { top: 80%; left: 50%; transform: scaleX(-1); }
+            51% { transform: scaleX(1); }
+            75% { top: 50%; left: 0%; transform: scaleX(1); }
+            76% { transform: scaleX(-1); }
+            100% { top: -50px; left: 30%; transform: scaleX(-1); }
+        }
+        
+        /* Instructions */
+        .instructions {
+            background: rgba(40, 40, 40, 0.5);
+            padding: 1.2rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border-left: 3px solid var(--spider-red);
+        }
+        
+        .instructions h3 {
+            color: var(--spider-red);
+            margin-bottom: 0.5rem;
+        }
+        
+        .instructions ul {
+            padding-left: 1.5rem;
+        }
+        
+        .instructions li {
+            margin-bottom: 0.3rem;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 1024px) {
+            .container {
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 2.8rem;
+            }
+            
+            .game-area {
+                min-height: 350px;
+                padding: 1.5rem;
+            }
+            
+            .robot-cell, .memory-card {
+                width: 90px;
+                height: 90px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .game-title {
+                font-size: 1.7rem;
+            }
+            
+            .game-content {
+                padding: 1.5rem;
+            }
+            
+            .robot-cell, .memory-card {
+                width: 80px;
+                height: 80px;
+                font-size: 1.8rem;
+            }
+            
+            .calculator-display {
+                font-size: 2rem;
+                min-height: 70px;
+            }
+            
+            .calc-btn {
+                padding: 1rem;
+                font-size: 1.1rem;
+            }
+            
+            .robot-controls {
+                gap: 8px;
+            }
+            
+            .robot-btn {
+                width: 70px;
+                height: 70px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .game-title {
+                font-size: 1.5rem;
+            }
+            
+            .game-area {
+                padding: 1rem;
+                min-height: 300px;
+            }
+            
+            .robot-cell, .memory-card {
+                width: 70px;
+                height: 70px;
+                font-size: 1.5rem;
+            }
+            
+            .memory-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 10px;
+            }
+            
+            .robot-container {
+                gap: 10px;
+            }
+            
+            .calculator {
+                padding: 1rem;
+            }
+            
+            .calculator-display {
+                font-size: 1.8rem;
+                padding: 1rem;
+                min-height: 60px;
+            }
+            
+            .calc-btn {
+                padding: 0.8rem;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated spider decorations -->
+    <div class="spider" style="top: 10%; left: 5%; animation-delay: 0s;"></div>
+    <div class="spider" style="top: 70%; left: 90%; animation-delay: 10s;"></div>
+    <div class="spider" style="top: 40%; left: 15%; animation-delay: 20s;"></div>
+    
+    <div class="container">
+        <header>
+            <h1>SpiderZen Games <span class="spider-icon">🕷</span></h1>
+            <p class="subtitle">Relax your mind with these spider-themed puzzle games. Each game runs independently in its own space.</p>
+        </header>
+        
+        <div class="games-container">
+            <!-- Robot Game -->
+            <section class="game-section">
+                <div class="game-header">
+                    <h2 class="game-title">🤖 Robot Pathfinder</h2>
+                </div>
+                <div class="game-content">
+                    <p class="game-description">Guide the robot through the grid to reach the target star. Use the arrow buttons or keyboard arrows to navigate. Try to reach the target in as few moves as possible!</p>
+                    
+                    <div class="game-controls">
+                        <button class="btn-primary" id="startRobotGame">Start Game</button>
+                        <button class="btn-secondary" id="resetRobotGame">Reset Game</button>
+                    </div>
+                    
+                    <div class="game-area">
+                        <div id="robotGame">
+                            <div class="problem-display">Guide the robot (🤖) to the star (⭐)</div>
+                            <div class="robot-container" id="robotGrid"></div>
+                            <div class="robot-controls">
+                                <button class="robot-btn btn-secondary" id="moveUp">↑</button>
+                                <button class="robot-btn btn-secondary" id="moveLeft">←</button>
+                                <button class="robot-btn btn-secondary" id="moveRight">→</button>
+                                <button class="robot-btn btn-secondary" id="moveDown">↓</button>
+                            </div>
+                            <div class="game-status" id="robotStatus">Moves: 0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="instructions">
+                        <h3>How to Play:</h3>
+                        <ul>
+                            <li>Use the arrow buttons or keyboard arrows to move the robot</li>
+                            <li>Navigate the robot to the star (⭐) on the grid</li>
+                            <li>Try to complete the puzzle in as few moves as possible</li>
+                            <li>Click "Reset Game" to start over</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Calculator Game -->
+            <section class="game-section">
+                <div class="game-header">
+                    <h2 class="game-title">🧮 Math Challenge</h2>
+                </div>
+                <div class="game-content">
+                    <p class="game-description">Solve math problems using the calculator. Each problem will test your arithmetic skills. Use the calculator to find the correct answer!</p>
+                    
+                    <div class="game-controls">
+                        <button class="btn-primary" id="startCalcGame">Start Game</button>
+                        <button class="btn-secondary" id="resetCalcGame">New Problem</button>
+                    </div>
+                    
+                    <div class="game-area">
+                        <div id="calculatorGame">
+                            <div class="problem-display" id="calcProblem">5 + 3 × 2 = ?</div>
+                            <div class="calculator">
+                                <div class="calculator-display" id="calcDisplay">0</div>
+                                <div class="calculator-buttons">
+                                    <button class="calc-btn" data-value="C">C</button>
+                                    <button class="calc-btn" data-value="CE">CE</button>
+                                    <button class="calc-btn" data-value="%">%</button>
+                                    <button class="calc-btn operator" data-value="/">/</button>
+                                    
+                                    <button class="calc-btn" data-value="7">7</button>
+                                    <button class="calc-btn" data-value="8">8</button>
+                                    <button class="calc-btn" data-value="9">9</button>
+                                    <button class="calc-btn operator" data-value="*">×</button>
+                                    
+                                    <button class="calc-btn" data-value="4">4</button>
+                                    <button class="calc-btn" data-value="5">5</button>
+                                    <button class="calc-btn" data-value="6">6</button>
+                                    <button class="calc-btn operator" data-value="-">-</button>
+                                    
+                                    <button class="calc-btn" data-value="1">1</button>
+                                    <button class="calc-btn" data-value="2">2</button>
+                                    <button class="calc-btn" data-value="3">3</button>
+                                    <button class="calc-btn operator" data-value="+">+</button>
+                                    
+                                    <button class="calc-btn" data-value="0">0</button>
+                                    <button class="calc-btn" data-value=".">.</button>
+                                    <button class="calc-btn equals" data-value="=">=</button>
+                                </div>
+                            </div>
+                            <div class="game-status" id="calcStatus">Solve the equation above using the calculator</div>
+                        </div>
+                    </div>
+                    
+                    <div class="instructions">
+                        <h3>How to Play:</h3>
+                        <ul>
+                            <li>Solve the math problem displayed above the calculator</li>
+                            <li>Use the calculator to compute the answer</li>
+                            <li>Press "=" to check your answer</li>
+                            <li>Use "C" to clear and "CE" to clear entry</li>
+                            <li>Click "New Problem" for a different challenge</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Memory Game -->
+            <section class="game-section">
+                <div class="game-header">
+                    <h2 class="game-title">🧠 Memory Match</h2>
+                </div>
+                <div class="game-content">
+                    <p class="game-description">Test your memory by matching pairs of cards. Flip two cards at a time to find all the matching pairs. Can you find all pairs with the fewest flips?</p>
+                    
+                    <div class="game-controls">
+                        <button class="btn-primary" id="startMemoryGame">Start Game</button>
+                        <button class="btn-secondary" id="resetMemoryGame">Reset Game</button>
+                    </div>
+                    
+                    <div class="game-area">
+                        <div id="memoryGame">
+                            <div class="problem-display">Match all pairs of cards</div>
+                            <div class="memory-grid" id="memoryGrid"></div>
+                            <div class="game-status" id="memoryStatus">Matches: 0/8</div>
+                        </div>
+                    </div>
+                    
+                    <div class="instructions">
+                        <h3>How to Play:</h3>
+                        <ul>
+                            <li>Click on cards to flip them over</li>
+                            <li>Find matching pairs of symbols</li>
+                            <li>If two cards match, they stay face up</li>
+                            <li>If they don't match, they flip back after a moment</li>
+                            <li>Match all pairs to win the game</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        // Robot Game
+        const robotGrid = document.getElementById('robotGrid');
+        const moveUpBtn = document.getElementById('moveUp');
+        const moveDownBtn = document.getElementById('moveDown');
+        const moveLeftBtn = document.getElementById('moveLeft');
+        const moveRightBtn = document.getElementById('moveRight');
+        const robotStatus = document.getElementById('robotStatus');
+        const startRobotGameBtn = document.getElementById('startRobotGame');
+        const resetRobotGameBtn = document.getElementById('resetRobotGame');
+        
+        let robotPosition = { row: 1, col: 1 };
+        let targetPosition = { row: 2, col: 2 };
+        let moves = 0;
+        let robotGameActive = false;
+        
+        function initRobotGame() {
+            robotGrid.innerHTML = '';
+            moves = 0;
+            // Randomize positions for variety
+            robotPosition = { 
+                row: Math.floor(Math.random() * 3), 
+                col: Math.floor(Math.random() * 3) 
+            };
+            
+            do {
+                targetPosition = { 
+                    row: Math.floor(Math.random() * 3), 
+                    col: Math.floor(Math.random() * 3) 
+                };
+            } while (targetPosition.row === robotPosition.row && targetPosition.col === robotPosition.col);
+            
+            robotGameActive = true;
+            
+            // Create 3x3 grid
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'robot-cell';
+                    cell.dataset.row = i;
+                    cell.dataset.col = j;
+                    
+                    if (i === robotPosition.row && j === robotPosition.col) {
+                        cell.textContent = '🤖';
+                        cell.classList.add('active');
+                    } else if (i === targetPosition.row && j === targetPosition.col) {
+                        cell.textContent = '⭐';
+                    }
+                    
+                    robotGrid.appendChild(cell);
+                }
+            }
+            
+            updateRobotStatus();
+        }
+        
+        function moveRobot(direction) {
+            if (!robotGameActive) return;
+            
+            let newRow = robotPosition.row;
+            let newCol = robotPosition.col;
+            
+            switch(direction) {
+                case 'up': newRow = Math.max(0, robotPosition.row - 1); break;
+                case 'down': newRow = Math.min(2, robotPosition.row + 1); break;
+                case 'left': newCol = Math.max(0, robotPosition.col - 1); break;
+                case 'right': newCol = Math.min(2, robotPosition.col + 1); break;
+            }
+            
+            // Update robot position
+            robotPosition = { row: newRow, col: newCol };
+            moves++;
+            
+            // Update grid
+            const cells = document.querySelectorAll('.robot-cell');
+            cells.forEach(cell => {
+                cell.textContent = '';
+                cell.classList.remove('active');
+                
+                const row = parseInt(cell.dataset.row);
+                const col = parseInt(cell.dataset.col);
+                
+                if (row === robotPosition.row && col === robotPosition.col) {
+                    cell.textContent = '🤖';
+                    cell.classList.add('active');
+                } else if (row === targetPosition.row && col === targetPosition.col) {
+                    cell.textContent = '⭐';
+                }
+            });
+            
+            // Check if robot reached target
+            if (robotPosition.row === targetPosition.row && robotPosition.col === targetPosition.col) {
+                robotStatus.textContent = Congratulations! You reached the target in ${moves} moves!;
+                robotGameActive = false;
+            } else {
+                updateRobotStatus();
+            }
+        }
+        
+        function updateRobotStatus() {
+            robotStatus.textContent = Moves: ${moves};
+        }
+        
+        // Calculator Game
+        const calcDisplay = document.getElementById('calcDisplay');
+        const calcProblem = document.getElementById('calcProblem');
+        const calcStatus = document.getElementById('calcStatus');
+        const startCalcGameBtn = document.getElementById('startCalcGame');
+        const resetCalcGameBtn = document.getElementById('resetCalcGame');
+        const calcButtons = document.querySelectorAll('.calc-btn');
+        
+        let currentProblem = '';
+        let currentAnswer = 0;
+        let userInput = '';
+        let calcGameActive = false;
+        
+        function initCalcGame() {
+            generateProblem();
+            userInput = '';
+            calcDisplay.textContent = '0';
+            calcGameActive = true;
+            calcStatus.textContent = 'Solve the equation above using the calculator';
+        }
+        
+        function generateProblem() {
+            const operations = ['+', '-', '*'];
+            const num1 = Math.floor(Math.random() * 10) + 1;
+            const num2 = Math.floor(Math.random() * 10) + 1;
+            const num3 = Math.floor(Math.random() * 10) + 1;
+            const op1 = operations[Math.floor(Math.random() * operations.length)];
+            const op2 = operations[Math.floor(Math.random() * operations.length)];
+            
+            currentProblem = ${num1} ${op1} ${num2} ${op2} ${num3};
+            currentAnswer = eval(currentProblem.replace('×', '*'));
+            
+            calcProblem.textContent = ${currentProblem} = ?;
+        }
+        
+        function handleCalcInput(value) {
+            if (!calcGameActive) return;
+            
+            switch(value) {
+                case 'C':
+                    userInput = '';
+                    calcDisplay.textContent = '0';
+                    break;
+                case 'CE':
+                    userInput = userInput.slice(0, -1);
+                    calcDisplay.textContent = userInput || '0';
+                    break;
+                case '=':
+                    checkAnswer();
+                    break;
+                default:
+                    if (userInput === '0' && value !== '.') userInput = value;
+                    else userInput += value;
+                    calcDisplay.textContent = userInput;
+                    break;
+            }
+        }
+        
+        function checkAnswer() {
+            const userAnswer = parseFloat(userInput);
+            if (userAnswer === currentAnswer) {
+                calcStatus.textContent = 'Correct! Well done!';
+                calcGameActive = false;
+            } else {
+                calcStatus.textContent = 'Incorrect. Try again!';
+            }
+        }
+        
+        // Memory Game
+        const memoryGrid = document.getElementById('memoryGrid');
+        const memoryStatus = document.getElementById('memoryStatus');
+        const startMemoryGameBtn = document.getElementById('startMemoryGame');
+        const resetMemoryGameBtn = document.getElementById('resetMemoryGame');
+        
+        let memoryCards = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let memoryGameActive = false;
+        
+        const symbols = ['🕷', '🕸', '🌟', '🔴', '⚫', '❤', '♦', '♠'];
+        
+        function initMemoryGame() {
+            memoryGrid.innerHTML = '';
+            flippedCards = [];
+            matchedPairs = 0;
+            memoryGameActive = true;
+            
+            // Create pairs of symbols
+            memoryCards = [...symbols, ...symbols];
+            // Shuffle the cards
+            for (let i = memoryCards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [memoryCards[i], memoryCards[j]] = [memoryCards[j], memoryCards[i]];
+            }
+            
+            // Create card elements
+            memoryCards.forEach((symbol, index) => {
+                const card = document.createElement('div');
+                card.className = 'memory-card';
+                card.dataset.index = index;
+                card.dataset.symbol = symbol;
+                card.textContent = '?';
+                
+                card.addEventListener('click', () => flipCard(card));
+                memoryGrid.appendChild(card);
+            });
+            
+            updateMemoryStatus();
+        }
+        
+        function flipCard(card) {
+            if (!memoryGameActive || flippedCards.length >= 2 || card.classList.contains('flipped') || card.classList.contains('matched')) {
+                return;
+            }
+            
+            card.textContent = card.dataset.symbol;
+            card.classList.add('flipped');
+            flippedCards.push(card);
+            
+            if (flippedCards.length === 2) {
+                checkForMatch();
+            }
+        }
+        
+        function checkForMatch() {
+            const [card1, card2] = flippedCards;
+            
+            if (card1.dataset.symbol === card2.dataset.symbol) {
+                // Match found
+                card1.classList.add('matched');
+                card2.classList.add('matched');
+                matchedPairs++;
+                flippedCards = [];
+                
+                if (matchedPairs === symbols.length) {
+                    memoryStatus.textContent = 'Congratulations! You matched all pairs!';
+                    memoryGameActive = false;
+                } else {
+                    updateMemoryStatus();
+                }
+            } else {
+                // No match
+                setTimeout(() => {
+                    card1.textContent = '?';
+                    card2.textContent = '?';
+                    card1.classList.remove('flipped');
+                    card2.classList.remove('flipped');
+                    flippedCards = [];
+                }, 1000);
+            }
+        }
+        
+        function updateMemoryStatus() {
+            memoryStatus.textContent = Matches: ${matchedPairs}/${symbols.length};
+        }
+        
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Robot Game
+            startRobotGameBtn.addEventListener('click', initRobotGame);
+            resetRobotGameBtn.addEventListener('click', initRobotGame);
+            moveUpBtn.addEventListener('click', () => moveRobot('up'));
+            moveDownBtn.addEventListener('click', () => moveRobot('down'));
+            moveLeftBtn.addEventListener('click', () => moveRobot('left'));
+            moveRightBtn.addEventListener('click', () => moveRobot('right'));
+            
+            // Calculator Game
+            startCalcGameBtn.addEventListener('click', initCalcGame);
+            resetCalcGameBtn.addEventListener('click', initCalcGame);
+            calcButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    handleCalcInput(button.dataset.value);
+                });
+            });
+            
+            // Memory Game
+            startMemoryGameBtn.addEventListener('click', initMemoryGame);
+            resetMemoryGameBtn.addEventListener('click', initMemoryGame);
+            
+            // Initialize games
+            initRobotGame();
+            initCalcGame();
+            initMemoryGame();
+        });
+        
+        // Keyboard controls for robot game
+        document.addEventListener('keydown', (e) => {
+            if (!robotGameActive) return;
+            
+            switch(e.key) {
+                case 'ArrowUp': moveRobot('up'); break;
+                case 'ArrowDown': moveRobot('down'); break;
+                case 'ArrowLeft': moveRobot('left'); break;
+                case 'ArrowRight': moveRobot('right'); break;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,180 +1,176 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Campus Mentor - Loading...</title>
-    <link rel="stylesheet" href="styles/animations.css">
+    <title>Campus Mentor</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
         }
         
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(45deg, #000000, #1a0000, #000000);
             height: 100vh;
             overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            font-family: 'Arial Black', sans-serif;
         }
-
-        .splash-container {
-            text-align: center;
-            color: white;
-            z-index: 10;
-            position: relative;
-        }
-
-        .logo {
-            font-size: 4rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            text-shadow: 0 0 30px rgba(255,255,255,0.5);
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-
-        .tagline {
-            font-size: 1.5rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-        }
-
-        .spider-web {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            opacity: 0.3;
-        }
-
-        .web-line {
-            position: absolute;
-            background: linear-gradient(45deg, transparent, white, transparent);
-            transform-origin: center;
-        }
-
+        
+        /* Animated Spiders */
         .spider {
             position: absolute;
-            width: 60px;
-            height: 60px;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="30" r="15" fill="%23333"/><path d="M50 45 L30 80 L70 80 Z" fill="%23333"/><path d="M20 40 L10 20 M80 40 L90 20 M25 60 L10 70 M75 60 L90 70" stroke="%23333" stroke-width="3"/></svg>');
-            animation: spiderMove 3s ease-in-out infinite;
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, #ff0000, #000000);
+            border-radius: 50%;
+            animation: float 6s infinite ease-in-out;
+            box-shadow: 0 0 30px #ff0000;
         }
-
-        .loading-bar {
-            width: 300px;
+        
+        .spider::before, .spider::after {
+            content: '';
+            position: absolute;
+            background: #ff0000;
+            animation: legMove 2s infinite alternate;
+        }
+        
+        .spider::before {
+            width: 70px;
             height: 8px;
-            background: rgba(255,255,255,0.2);
+            top: 10px;
+            left: -10px;
             border-radius: 10px;
-            margin: 2rem auto;
-            overflow: hidden;
         }
-
-        .loading-progress {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+        
+        .spider::after {
+            width: 70px;
+            height: 8px;
+            top: 30px;
+            left: -10px;
             border-radius: 10px;
-            animation: loading 3s ease-in-out forwards;
         }
-
-        @keyframes glow {
-            from { text-shadow: 0 0 20px #ff6b6b; }
-            to { text-shadow: 0 0 30px #4ecdc4, 0 0 40px #45b7d1; }
+        
+        .spider.yellow {
+            background: radial-gradient(circle, #ffff00, #000000);
+            box-shadow: 0 0 30px #ffff00;
         }
-
-        @keyframes loading {
-            0% { width: 0%; }
-            100% { width: 100%; }
+        
+        .spider.yellow::before, .spider.yellow::after {
+            background: #ffff00;
         }
-
-        @keyframes spiderMove {
+        
+        .spider.pink {
+            background: radial-gradient(circle, #ff00ff, #000000);
+            box-shadow: 0 0 30px #ff00ff;
+        }
+        
+        .spider.pink::before, .spider.pink::after {
+            background: #ff00ff;
+        }
+        
+        .spider.neon {
+            background: radial-gradient(circle, #00ffff, #000000);
+            box-shadow: 0 0 30px #00ffff;
+        }
+        
+        .spider.neon::before, .spider.neon::after {
+            background: #00ffff;
+        }
+        
+        /* Spider Positions */
+        .spider1 { top: 10%; left: 5%; animation-delay: 0s; }
+        .spider2 { top: 20%; right: 8%; animation-delay: 1s; }
+        .spider3 { bottom: 25%; left: 7%; animation-delay: 2s; }
+        .spider4 { top: 15%; right: 15%; animation-delay: 0.5s; }
+        .spider5 { bottom: 15%; left: 20%; animation-delay: 1.5s; }
+        .spider6 { top: 30%; left: 15%; animation-delay: 2.5s; }
+        .spider7 { bottom: 30%; right: 10%; animation-delay: 3s; }
+        .spider8 { top: 40%; right: 5%; animation-delay: 0.8s; }
+        .spider9 { bottom: 40%; left: 10%; animation-delay: 2.2s; }
+        .spider10 { top: 50%; left: 5%; animation-delay: 1.8s; }
+        
+        @keyframes float {
             0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(5deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+        
+        @keyframes legMove {
+            0% { transform: rotate(-10deg); }
+            100% { transform: rotate(10deg); }
+        }
+        
+        /* Main Heading */
+        .main-heading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        
+        .main-heading h1 {
+            font-size: 80px;
+            background: linear-gradient(45deg, #ff0000, #ffff00, #ff00ff, #00ffff);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: neonGlow 3s infinite alternate;
+            text-shadow: 0 0 20px currentColor;
+        }
+        
+        @keyframes neonGlow {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+        
+        /* Creators */
+        .creators {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            color: white;
+            font-size: 16px;
+            background: rgba(0,0,0,0.7);
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 2px solid #ff00ff;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 10px #ff00ff; }
+            50% { box-shadow: 0 0 30px #ff00ff; }
         }
     </style>
 </head>
 <body>
-    <!-- Spider Web Background -->
-    <div class="spider-web" id="spiderWeb"></div>
+    <!-- Animated Spiders -->
+    <div class="spider spider1"></div>
+    <div class="spider yellow spider2"></div>
+    <div class="spider pink spider3"></div>
+    <div class="spider neon spider4"></div>
+    <div class="spider spider5"></div>
+    <div class="spider yellow spider6"></div>
+    <div class="spider pink spider7"></div>
+    <div class="spider neon spider8"></div>
+    <div class="spider spider9"></div>
+    <div class="spider yellow spider10"></div>
     
-    <!-- Animated Spider -->
-    <div class="spider" id="spider"></div>
-
-    <!-- Main Content -->
-    <div class="splash-container">
-        <h1 class="logo">Campus Mentor</h1>
-        <p class="tagline">Learn • Earn • Grow Together</p>
-        
-        <div class="loading-bar">
-            <div class="loading-progress"></div>
-        </div>
-        
-        <p>Loading amazing features...</p>
+    <!-- Main Heading -->
+    <div class="main-heading">
+        <h1>CAMPUS MENTOR</h1>
     </div>
-
+    
+    <!-- Creators -->
+    <div class="creators">
+        <p>Created by: Riddhi Aggrawal, Anannya Vyas, Khushpreet Kaur</p>
+    </div>
+    
     <script>
-        // Create dynamic spider web
-        function createSpiderWeb() {
-            const web = document.getElementById('spiderWeb');
-            const lines = 20;
-            
-            for(let i = 0; i < lines; i++) {
-                const line = document.createElement('div');
-                line.className = 'web-line';
-                
-                const angle = (i / lines) * 360;
-                const length = Math.random() * 300 + 200;
-                
-                line.style.width = '2px';
-                line.style.height = length + 'px';
-                line.style.top = '50%';
-                line.style.left = '50%';
-                line.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
-                line.style.animation = `webPulse ${Math.random() * 3 + 2}s infinite`;
-                
-                web.appendChild(line);
-            }
-        }
-
-        // Move spider around
-        function moveSpider() {
-            const spider = document.getElementById('spider');
-            setInterval(() => {
-                const x = Math.random() * window.innerWidth;
-                const y = Math.random() * window.innerHeight;
-                spider.style.left = x + 'px';
-                spider.style.top = y + 'px';
-            }, 3000);
-        }
-
-        // Redirect to main app after loading
         setTimeout(() => {
-            window.location.href = 'index.html';
+            window.location.href = "/role-selection";
         }, 4000);
-
-        // Initialize animations
-        createSpiderWeb();
-        moveSpider();
-
-        // Add CSS for web pulse animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes webPulse {
-                0%, 100% { opacity: 0.1; transform: translate(-50%, -50%) rotate(var(--angle)) scaleY(1); }
-                50% { opacity: 0.3; transform: translate(-50%, -50%) rotate(var(--angle)) scaleY(1.1); }
-            }
-        `;
-        document.head.appendChild(style);
     </script>
 </body>
 </html>

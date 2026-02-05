@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arachnid Tasks - Spider-Themed To-Do List</title>
+    <style>
+        :root {
+            --spider-red: #8B0000;
+            --spider-dark: #0A0A0A;
+            --web-gray: #1A1A1A;
+            --text-light: #F0F0F0;
+            --accent-red: #B22222;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--spider-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(139, 0, 0, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(139, 0, 0, 0.1) 0%, transparent 20%);
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Spider web background effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, var(--web-gray) 1px, transparent 1px) 0 0 / 30px 30px,
+                linear-gradient(0deg, var(--web-gray) 1px, transparent 1px) 0 0 / 30px 30px;
+            opacity: 0.2;
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            color: var(--spider-red);
+            text-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
+            margin-bottom: 0.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 10%;
+            width: 80%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--spider-red), transparent);
+        }
+        
+        .spider-icon {
+            display: inline-block;
+            margin-left: 10px;
+            animation: swing 3s infinite ease-in-out;
+        }
+        
+        @keyframes swing {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+        
+        .task-form {
+            background: rgba(26, 26, 26, 0.8);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--spider-red);
+            box-shadow: 0 0 15px rgba(139, 0, 0, 0.3);
+        }
+        
+        .form-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        input, textarea, button {
+            padding: 0.75rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        input, textarea {
+            background: var(--web-gray);
+            color: var(--text-light);
+            border: 1px solid #333;
+            flex: 1;
+        }
+        
+        input:focus, textarea:focus {
+            outline: 1px solid var(--spider-red);
+        }
+        
+        button {
+            background: var(--spider-red);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            background: var(--accent-red);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .task-item {
+            background: rgba(26, 26, 26, 0.8);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .task-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(139, 0, 0, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .task-item:hover::before {
+            left: 100%;
+        }
+        
+        .task-item.completed {
+            opacity: 0.7;
+            border-left: 4px solid var(--spider-red);
+        }
+        
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--spider-red);
+            cursor: pointer;
+        }
+        
+        .task-content {
+            flex: 1;
+        }
+        
+        .task-title {
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+            color: var(--text-light);
+        }
+        
+        .task-description {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        
+        .task-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .task-actions button {
+            padding: 0.5rem;
+            font-size: 0.8rem;
+            background: transparent;
+            border: 1px solid #444;
+        }
+        
+        .task-actions button.edit-btn:hover {
+            background: #333;
+            border-color: #666;
+        }
+        
+        .task-actions button.delete-btn:hover {
+            background: var(--spider-red);
+            border-color: var(--spider-red);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+        
+        .empty-state img {
+            width: 100px;
+            opacity: 0.5;
+            margin-bottom: 1rem;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .filter-buttons button {
+            background: transparent;
+            border: 1px solid #444;
+            padding: 0.5rem 1rem;
+        }
+        
+        .filter-buttons button.active {
+            background: var(--spider-red);
+            border-color: var(--spider-red);
+        }
+        
+        /* Spider decoration */
+        .spider {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            background: var(--spider-dark);
+            border-radius: 50%;
+            box-shadow: 0 0 0 5px var(--spider-red);
+            animation: crawl 30s linear infinite;
+            z-index: -1;
+        }
+        
+        .spider::before, .spider::after {
+            content: '';
+            position: absolute;
+            background: var(--spider-red);
+        }
+        
+        .spider::before {
+            width: 40px;
+            height: 5px;
+            top: 5px;
+            left: -5px;
+        }
+        
+        .spider::after {
+            width: 40px;
+            height: 5px;
+            top: 20px;
+            left: -5px;
+        }
+        
+        .spider-legs {
+            position: absolute;
+            width: 60px;
+            height: 40px;
+            top: -5px;
+            left: -15px;
+        }
+        
+        .spider-leg {
+            position: absolute;
+            width: 30px;
+            height: 5px;
+            background: var(--spider-red);
+            border-radius: 5px;
+        }
+        
+        .spider-leg:nth-child(1) { transform: rotate(30deg); top: 5px; left: 0; }
+        .spider-leg:nth-child(2) { transform: rotate(-30deg); top: 5px; right: 0; }
+        .spider-leg:nth-child(3) { transform: rotate(45deg); top: 15px; left: -5px; }
+        .spider-leg:nth-child(4) { transform: rotate(-45deg); top: 15px; right: -5px; }
+        .spider-leg:nth-child(5) { transform: rotate(60deg); top: 25px; left: -10px; }
+        .spider-leg:nth-child(6) { transform: rotate(-60deg); top: 25px; right: -10px; }
+        .spider-leg:nth-child(7) { transform: rotate(75deg); top: 35px; left: -15px; }
+        .spider-leg:nth-child(8) { transform: rotate(-75deg); top: 35px; right: -15px; }
+        
+        @keyframes crawl {
+            0% { top: -50px; left: 0%; }
+            25% { top: 30%; left: 95%; }
+            50% { top: 95%; left: 50%; }
+            75% { top: 60%; left: 0%; }
+            100% { top: -50px; left: 30%; }
+        }
+        
+        /* Responsive design */
+        @media (max-width: 600px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .form-group {
+                flex-direction: column;
+            }
+            
+            .task-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .task-actions {
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated spider decoration -->
+    <div class="spider">
+        <div class="spider-legs">
+            <div class="spider-leg"></div>
+            <div class="spider-leg"></div>
+            <div class="spider-leg"></div>
+            <div class="spider-leg"></div>
+            <div class="spider-leg"></div>
+            <div class="spider-leg"></div>
+            <div class="spider-leg"></div>
+            <div class="spider-leg"></div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <header>
+            <h1>Arachnid Tasks <span class="spider-icon">🕷</span></h1>
+            <p>Your web of productivity</p>
+        </header>
+        
+        <section class="task-form">
+            <form id="addTaskForm">
+                <div class="form-group">
+                    <input type="text" id="taskTitle" placeholder="Enter task title..." required>
+                    <button type="submit">Add Task</button>
+                </div>
+                <div class="form-group" style="margin-top: 10px;">
+                    <textarea id="taskDescription" placeholder="Task description (optional)"></textarea>
+                </div>
+            </form>
+        </section>
+        
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">All Tasks</button>
+            <button class="filter-btn" data-filter="active">Active</button>
+            <button class="filter-btn" data-filter="completed">Completed</button>
+        </div>
+        
+        <section class="task-list" id="taskList">
+            <!-- Tasks will be dynamically added here -->
+            <div class="empty-state">
+                <div>🕸</div>
+                <p>No tasks yet. Add a task to get started!</p>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Task management
+        let tasks = JSON.parse(localStorage.getItem('spiderTasks')) || [];
+        let currentFilter = 'all';
+        
+        // DOM elements
+        const taskForm = document.getElementById('addTaskForm');
+        const taskTitle = document.getElementById('taskTitle');
+        const taskDescription = document.getElementById('taskDescription');
+        const taskList = document.getElementById('taskList');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        
+        // Initialize the app
+        function init() {
+            renderTasks();
+            setupEventListeners();
+        }
+        
+        // Set up event listeners
+        function setupEventListeners() {
+            taskForm.addEventListener('submit', addTask);
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Update active filter button
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    // Filter tasks
+                    currentFilter = button.getAttribute('data-filter');
+                    renderTasks();
+                });
+            });
+        }
+        
+        // Add a new task
+        function addTask(e) {
+            e.preventDefault();
+            
+            const title = taskTitle.value.trim();
+            const description = taskDescription.value.trim();
+            
+            if (!title) return;
+            
+            const newTask = {
+                id: Date.now(),
+                title,
+                description,
+                completed: false,
+                createdAt: new Date().toISOString()
+            };
+            
+            tasks.unshift(newTask);
+            saveTasks();
+            renderTasks();
+            
+            // Reset form
+            taskForm.reset();
+            taskTitle.focus();
+        }
+        
+        // Toggle task completion
+        function toggleTask(id) {
+            tasks = tasks.map(task => {
+                if (task.id === id) {
+                    return { ...task, completed: !task.completed };
+                }
+                return task;
+            });
+            
+            saveTasks();
+            renderTasks();
+        }
+        
+        // Edit a task
+        function editTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (!task) return;
+            
+            const newTitle = prompt('Edit task title:', task.title);
+            if (newTitle === null) return; // User cancelled
+            
+            const newDescription = prompt('Edit task description:', task.description);
+            
+            tasks = tasks.map(t => {
+                if (t.id === id) {
+                    return { 
+                        ...t, 
+                        title: newTitle.trim(), 
+                        description: newDescription ? newDescription.trim() : '' 
+                    };
+                }
+                return t;
+            });
+            
+            saveTasks();
+            renderTasks();
+        }
+        
+        // Delete a task
+        function deleteTask(id) {
+            if (confirm('Are you sure you want to delete this task?')) {
+                tasks = tasks.filter(task => task.id !== id);
+                saveTasks();
+                renderTasks();
+            }
+        }
+        
+        // Save tasks to localStorage
+        function saveTasks() {
+            localStorage.setItem('spiderTasks', JSON.stringify(tasks));
+        }
+        
+        // Render tasks based on current filter
+        function renderTasks() {
+            let filteredTasks = tasks;
+            
+            if (currentFilter === 'active') {
+                filteredTasks = tasks.filter(task => !task.completed);
+            } else if (currentFilter === 'completed') {
+                filteredTasks = tasks.filter(task => task.completed);
+            }
+            
+            if (filteredTasks.length === 0) {
+                taskList.innerHTML = `
+                    <div class="empty-state">
+                        <div>🕸</div>
+                        <p>No ${currentFilter !== 'all' ? currentFilter : ''} tasks found.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            taskList.innerHTML = filteredTasks.map(task => `
+                <div class="task-item ${task.completed ? 'completed' : ''}">
+                    <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''} 
+                           onchange="toggleTask(${task.id})">
+                    <div class="task-content">
+                        <div class="task-title">${escapeHtml(task.title)}</div>
+                        ${task.description ? <div class="task-description">${escapeHtml(task.description)}</div> : ''}
+                    </div>
+                    <div class="task-actions">
+                        <button class="edit-btn" onclick="editTask(${task.id})">Edit</button>
+                        <button class="delete-btn" onclick="deleteTask(${task.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Helper function to escape HTML
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+        
+        // Integration API - these functions can be called from your other app
+        window.spiderTodoApp = {
+            // Add a task programmatically
+            addTask: function(title, description = '') {
+                const newTask = {
+                    id: Date.now(),
+                    title: title.trim(),
+                    description: description.trim(),
+                    completed: false,
+                    createdAt: new Date().toISOString()
+                };
+                
+                tasks.unshift(newTask);
+                saveTasks();
+                renderTasks();
+                return newTask.id;
+            },
+            
+            // Get all tasks
+            getTasks: function() {
+                return [...tasks]; // Return a copy to prevent direct mutation
+            },
+            
+            // Get tasks by completion status
+            getTasksByStatus: function(completed) {
+                return tasks.filter(task => task.completed === completed);
+            },
+            
+            // Mark a task as completed
+            completeTask: function(id) {
+                const task = tasks.find(t => t.id === id);
+                if (task) {
+                    task.completed = true;
+                    saveTasks();
+                    renderTasks();
+                    return true;
+                }
+                return false;
+            },
+            
+            // Delete a task by ID
+            deleteTask: function(id) {
+                const initialLength = tasks.length;
+                tasks = tasks.filter(task => task.id !== id);
+                if (tasks.length < initialLength) {
+                    saveTasks();
+                    renderTasks();
+                    return true;
+                }
+                return false;
+            },
+            
+            // Clear all completed tasks
+            clearCompleted: function() {
+                const initialLength = tasks.length;
+                tasks = tasks.filter(task => !task.completed);
+                if (tasks.length < initialLength) {
+                    saveTasks();
+                    renderTasks();
+                    return true;
+                }
+                return false;
+            }
+        };
+        
+        // Initialize the app when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

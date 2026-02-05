@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpiderStudy - Study Hour Calculator & Alarm</title>
+    <style>
+        :root {
+            --spider-red: #8B0000;
+            --spider-dark: #0A0A0A;
+            --web-gray: #1A1A1A;
+            --text-light: #F0F0F0;
+            --accent-red: #B22222;
+            --accent-dark: #2A0A0A;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--spider-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(139, 0, 0, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(139, 0, 0, 0.1) 0%, transparent 20%);
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Spider web background effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, var(--web-gray) 1px, transparent 1px) 0 0 / 30px 30px,
+                linear-gradient(0deg, var(--web-gray) 1px, transparent 1px) 0 0 / 30px 30px;
+            opacity: 0.2;
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            color: var(--spider-red);
+            text-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
+            margin-bottom: 0.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 10%;
+            width: 80%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--spider-red), transparent);
+        }
+        
+        .spider-icon {
+            display: inline-block;
+            margin-left: 10px;
+            animation: swing 3s infinite ease-in-out;
+        }
+        
+        @keyframes swing {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+        
+        .subtitle {
+            color: #aaa;
+            font-size: 1.2rem;
+            margin-top: 1rem;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background: rgba(26, 26, 26, 0.8);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid var(--spider-red);
+            box-shadow: 0 0 15px rgba(139, 0, 0, 0.3);
+        }
+        
+        .card h2 {
+            color: var(--spider-red);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .study-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        label {
+            font-weight: 500;
+            color: #ccc;
+        }
+        
+        input, select, textarea {
+            padding: 0.8rem;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background: var(--web-gray);
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: 1px solid var(--spider-red);
+            box-shadow: 0 0 8px rgba(139, 0, 0, 0.3);
+        }
+        
+        button {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background: var(--spider-red);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--accent-red);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid #444;
+            color: #ccc;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--spider-red);
+        }
+        
+        .timer-display {
+            font-size: 3rem;
+            text-align: center;
+            margin: 1rem 0;
+            font-weight: bold;
+            color: var(--spider-red);
+            text-shadow: 0 0 10px rgba(139, 0, 0, 0.3);
+        }
+        
+        .timer-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .stat-card {
+            background: var(--accent-dark);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #333;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--spider-red);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        
+        .alarm-list {
+            margin-top: 1rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .alarm-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem;
+            background: rgba(40, 40, 40, 0.5);
+            border-radius: 5px;
+            margin-bottom: 0.5rem;
+            border-left: 3px solid var(--spider-red);
+        }
+        
+        .alarm-time {
+            font-weight: bold;
+        }
+        
+        .alarm-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-small {
+            padding: 0.3rem 0.7rem;
+            font-size: 0.8rem;
+        }
+        
+        .study-sessions {
+            margin-top: 1rem;
+        }
+        
+        .session-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem;
+            background: rgba(40, 40, 40, 0.5);
+            border-radius: 5px;
+            margin-bottom: 0.5rem;
+            border-left: 3px solid var(--accent-red);
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: var(--spider-red);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        /* Spider decoration */
+        .spider {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            background: var(--spider-dark);
+            border-radius: 50%;
+            box-shadow: 0 0 0 5px var(--spider-red);
+            animation: crawl 50s linear infinite;
+            z-index: -1;
+        }
+        
+        .spider::before, .spider::after {
+            content: '';
+            position: absolute;
+            background: var(--spider-red);
+        }
+        
+        .spider::before {
+            width: 40px;
+            height: 5px;
+            top: 5px;
+            left: -5px;
+        }
+        
+        .spider::after {
+            width: 40px;
+            height: 5px;
+            top: 20px;
+            left: -5px;
+        }
+        
+        .spider-legs {
+            position: absolute;
+            width: 60px;
+            height: 40px;
+            top: -5px;
+            left: -15px;
+        }
+        
+        .spider-leg {
+            position: absolute;
+            width: 30px;
+            height: 5px;
+            background: var(--spider-red);
+            border-radius: 5px;
+        }
+        
+        .spider-leg:nth-child(1) { transform: rotate(30deg); top: 5px; left: 0; }
+        .spider-leg:nth-child(2) { transform: rotate(-30deg); top: 5px; right: 0; }
+        .spider-leg:nth-child(3) { transform: rotate(45deg); top: 15px; left: -5px; }
+        .spider-leg:nth-child(4) { transform: rotate(-45deg); top: 15px; right: -5px; }
+        .spider-leg:nth-child(5) { transform: rotate(60deg); top: 25px; left: -10px; }
+        .spider-leg:nth-child(6) { transform: rotate(-60deg); top: 25px; right: -10px; }
+        .spider-leg:nth-child(7) { transform: rotate(75deg); top: 35px; left: -15px; }
+        .spider-leg:nth-child(8) { transform: rotate(-75deg); top: 35px; right: -15px; }
+        
+        @keyframes crawl {
+            0% { top: -50px; left: 0%; }
+            25% { top: 30%; left: 95%; transform: scaleX(1); }
+            26% { transform: scaleX(-1); }
+            50% { top: 95%; left: 50%; transform: scaleX(-1); }
+            51% { transform: scaleX(1); }
+            75% { top: 60%; left: 0%; transform: scaleX(1); }
+            76% { transform: scaleX(-1); }
+            100% { top: -50px; left: 30%; transform: scaleX(-1); }
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem;
+            background: var(--spider-red);
+            color: white;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        /* Responsive design */
+        @media (max-width: 600px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .timer-display {
+                font-size: 2.5rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .timer-controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated spider decoration -->
+    <div class="spider">
+        <div class="spider-legs">
+            <div class="spider-leg"></div>
+            <div class="spider-leg"></div>
+            <div class="spider-leg"></div>
+            <div class="spider-leg"></div>
+            <div class="spider-leg"></div>
+            <div class="spider-leg"></div>
+            <div class="spider-leg"></div>
+            <div class="spider-leg"></div>
+        </div>
+    </div>
+    
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <div id="notificationText">Alarm triggered!</div>
+    </div>
+    
+    <div class="container">
+        <header>
+            <h1>SpiderStudy <span class="spider-icon">🕷</span></h1>
+            <p class="subtitle">Track your study hours and set productivity alarms</p>
+        </header>
+        
+        <div class="dashboard">
+            <div class="card">
+                <h2>⏱ Study Timer</h2>
+                <div class="study-controls">
+                    <div class="input-group">
+                        <label for="studySubject">Study Subject</label>
+                        <input type="text" id="studySubject" placeholder="Enter subject name">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="studyDuration">Study Duration (minutes)</label>
+                        <input type="number" id="studyDuration" min="1" value="25">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="breakDuration">Break Duration (minutes)</label>
+                        <input type="number" id="breakDuration" min="1" value="5">
+                    </div>
+                    
+                    <button class="btn-primary" id="startTimer">Start Study Session</button>
+                </div>
+                
+                <div class="timer-display" id="timerDisplay">25:00</div>
+                
+                <div class="timer-controls">
+                    <button class="btn-secondary" id="pauseTimer">Pause</button>
+                    <button class="btn-secondary" id="resetTimer">Reset</button>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress" id="progressBar"></div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>📊 Study Statistics</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="todayTime">0h 0m</div>
+                        <div class="stat-label">Today</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="weekTime">0h 0m</div>
+                        <div class="stat-label">This Week</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalTime">0h 0m</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                </div>
+                
+                <h3 style="margin-top: 1.5rem;">Recent Study Sessions</h3>
+                <div class="study-sessions" id="studySessions">
+                    <div class="session-item">
+                        <span>No sessions yet</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dashboard">
+            <div class="card">
+                <h2>⏰ Set Alarm</h2>
+                <div class="study-controls">
+                    <div class="input-group">
+                        <label for="alarmTime">Alarm Time</label>
+                        <input type="time" id="alarmTime">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="alarmLabel">Alarm Label</label>
+                        <input type="text" id="alarmLabel" placeholder="Study session, Break, etc.">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="alarmRepeat">Repeat</label>
+                        <select id="alarmRepeat">
+                            <option value="once">Once</option>
+                            <option value="daily">Daily</option>
+                            <option value="weekdays">Weekdays</option>
+                            <option value="weekends">Weekends</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn-primary" id="setAlarm">Set Alarm</button>
+                </div>
+                
+                <h3 style="margin-top: 1.5rem;">Active Alarms</h3>
+                <div class="alarm-list" id="alarmList">
+                    <div class="alarm-item">
+                        <span>No alarms set</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>🎯 Study Goals</h2>
+                <div class="study-controls">
+                    <div class="input-group">
+                        <label for="dailyGoal">Daily Goal (hours)</label>
+                        <input type="number" id="dailyGoal" min="0.5" step="0.5" value="2">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="weeklyGoal">Weekly Goal (hours)</label>
+                        <input type="number" id="weeklyGoal" min="5" step="1" value="14">
+                    </div>
+                    
+                    <button class="btn-primary" id="saveGoals">Save Goals</button>
+                </div>
+                
+                <div class="progress-bar" style="margin-top: 1.5rem;">
+                    <div class="progress" id="dailyProgress" style="width: 0%"></div>
+                </div>
+                <div style="text-align: center; margin-top: 0.5rem; font-size: 0.9rem;">
+                    Daily Progress: <span id="dailyProgressText">0%</span>
+                </div>
+                
+                <div class="progress-bar" style="margin-top: 1rem;">
+                    <div class="progress" id="weeklyProgress" style="width: 0%"></div>
+                </div>
+                <div style="text-align: center; margin-top: 0.5rem; font-size: 0.9rem;">
+                    Weekly Progress: <span id="weeklyProgressText">0%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Study Timer Functionality
+        let timerInterval;
+        let timerRunning = false;
+        let timerPaused = false;
+        let timeLeft = 25 * 60; // 25 minutes in seconds
+        let totalTime = 0;
+        let studySessions = [];
+        let alarms = [];
+        
+        // DOM Elements
+        const timerDisplay = document.getElementById('timerDisplay');
+        const startTimerBtn = document.getElementById('startTimer');
+        const pauseTimerBtn = document.getElementById('pauseTimer');
+        const resetTimerBtn = document.getElementById('resetTimer');
+        const progressBar = document.getElementById('progressBar');
+        const studySessionsList = document.getElementById('studySessions');
+        const alarmList = document.getElementById('alarmList');
+        const notification = document.getElementById('notification');
+        const notificationText = document.getElementById('notificationText');
+        
+        // Initialize the app
+        function init() {
+            loadData();
+            updateStats();
+            updateAlarmList();
+            updateStudySessions();
+            setupEventListeners();
+            checkAlarms();
+            setInterval(checkAlarms, 1000); // Check alarms every second
+        }
+        
+        // Set up event listeners
+        function setupEventListeners() {
+            startTimerBtn.addEventListener('click', startTimer);
+            pauseTimerBtn.addEventListener('click', togglePause);
+            resetTimerBtn.addEventListener('click', resetTimer);
+            document.getElementById('setAlarm').addEventListener('click', setAlarm);
+            document.getElementById('saveGoals').addEventListener('click', saveGoals);
+        }
+        
+        // Timer functions
+        function startTimer() {
+            if (timerRunning && !timerPaused) return;
+            
+            const subject = document.getElementById('studySubject').value || 'General Study';
+            const duration = parseInt(document.getElementById('studyDuration').value) || 25;
+            
+            if (!timerRunning) {
+                timeLeft = duration * 60;
+                totalTime = duration * 60;
+            }
+            
+            timerRunning = true;
+            timerPaused = false;
+            startTimerBtn.textContent = 'Resume Study Session';
+            startTimerBtn.disabled = true;
+            
+            timerInterval = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    updateTimerDisplay();
+                    updateProgressBar();
+                } else {
+                    // Timer completed
+                    clearInterval(timerInterval);
+                    timerRunning = false;
+                    startTimerBtn.textContent = 'Start Study Session';
+                    startTimerBtn.disabled = false;
+                    
+                    // Save session
+                    const session = {
+                        subject: subject,
+                        duration: duration,
+                        date: new Date().toISOString()
+                    };
+                    
+                    studySessions.unshift(session);
+                    saveData();
+                    updateStudySessions();
+                    updateStats();
+                    
+                    // Show notification
+                    showNotification(Study session completed: ${subject} for ${duration} minutes);
+                    
+                    // Check if break should be started
+                    const breakDuration = parseInt(document.getElementById('breakDuration').value) || 5;
+                    if (breakDuration > 0) {
+                        if (confirm(Take a ${breakDuration} minute break?)) {
+                            timeLeft = breakDuration * 60;
+                            totalTime = breakDuration * 60;
+                            startTimer();
+                            showNotification(Break started: ${breakDuration} minutes);
+                        }
+                    }
+                }
+            }, 1000);
+        }
+        
+        function togglePause() {
+            if (!timerRunning) return;
+            
+            if (timerPaused) {
+                // Resume timer
+                timerPaused = false;
+                pauseTimerBtn.textContent = 'Pause';
+                startTimer();
+            } else {
+                // Pause timer
+                timerPaused = true;
+                clearInterval(timerInterval);
+                pauseTimerBtn.textContent = 'Resume';
+            }
+        }
+        
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerRunning = false;
+            timerPaused = false;
+            startTimerBtn.textContent = 'Start Study Session';
+            startTimerBtn.disabled = false;
+            pauseTimerBtn.textContent = 'Pause';
+            
+            const duration = parseInt(document.getElementById('studyDuration').value) || 25;
+            timeLeft = duration * 60;
+            totalTime = duration * 60;
+            updateTimerDisplay();
+            updateProgressBar();
+        }
+        
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerDisplay.textContent = ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')};
+        }
+        
+        function updateProgressBar() {
+            const progress = ((totalTime - timeLeft) / totalTime) * 100;
+            progressBar.style.width = ${progress}%;
+        }
+        
+        // Alarm functions
+        function setAlarm() {
+            const alarmTime = document.getElementById('alarmTime').value;
+            const label = document.getElementById('alarmLabel').value || 'Study Reminder';
+            const repeat = document.getElementById('alarmRepeat').value;
+            
+            if (!alarmTime) {
+                alert('Please set an alarm time');
+                return;
+            }
+            
+            const alarm = {
+                time: alarmTime,
+                label: label,
+                repeat: repeat,
+                active: true,
+                id: Date.now()
+            };
+            
+            alarms.push(alarm);
+            saveData();
+            updateAlarmList();
+            document.getElementById('alarmTime').value = '';
+            document.getElementById('alarmLabel').value = '';
+            
+            showNotification(Alarm set for ${alarmTime});
+        }
+        
+        function deleteAlarm(id) {
+            alarms = alarms.filter(alarm => alarm.id !== id);
+            saveData();
+            updateAlarmList();
+        }
+        
+        function toggleAlarm(id) {
+            const alarm = alarms.find(a => a.id === id);
+            if (alarm) {
+                alarm.active = !alarm.active;
+                saveData();
+                updateAlarmList();
+            }
+        }
+        
+        function checkAlarms() {
+            const now = new Date();
+            const currentTime = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+            const currentDay = now.getDay(); // 0 = Sunday, 6 = Saturday
+            
+            alarms.forEach(alarm => {
+                if (alarm.active && alarm.time === currentTime) {
+                    let shouldRing = false;
+                    
+                    switch(alarm.repeat) {
+                        case 'once':
+                            shouldRing = true;
+                            alarm.active = false; // Deactivate after ringing once
+                            break;
+                        case 'daily':
+                            shouldRing = true;
+                            break;
+                        case 'weekdays':
+                            shouldRing = currentDay >= 1 && currentDay <= 5; // Monday to Friday
+                            break;
+                        case 'weekends':
+                            shouldRing = currentDay === 0 || currentDay === 6; // Saturday or Sunday
+                            break;
+                    }
+                    
+                    if (shouldRing) {
+                        showNotification(Alarm: ${alarm.label}, true);
+                    }
+                }
+            });
+            
+            saveData();
+        }
+        
+        function updateAlarmList() {
+            if (alarms.length === 0) {
+                alarmList.innerHTML = '<div class="alarm-item"><span>No alarms set</span></div>';
+                return;
+            }
+            
+            alarmList.innerHTML = alarms.map(alarm => `
+                <div class="alarm-item">
+                    <div>
+                        <div class="alarm-time">${alarm.time}</div>
+                        <div>${alarm.label} (${alarm.repeat})</div>
+                    </div>
+                    <div class="alarm-actions">
+                        <button class="btn-small ${alarm.active ? 'btn-primary' : 'btn-secondary'}" onclick="toggleAlarm(${alarm.id})">
+                            ${alarm.active ? 'On' : 'Off'}
+                        </button>
+                        <button class="btn-small btn-secondary" onclick="deleteAlarm(${alarm.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Study goals functions
+        function saveGoals() {
+            const dailyGoal = parseFloat(document.getElementById('dailyGoal').value) || 2;
+            const weeklyGoal = parseFloat(document.getElementById('weeklyGoal').value) || 14;
+            
+            localStorage.setItem('dailyGoal', dailyGoal);
+            localStorage.setItem('weeklyGoal', weeklyGoal);
+            
+            updateGoalProgress();
+            showNotification('Study goals saved');
+        }
+        
+        function updateGoalProgress() {
+            const dailyGoal = parseFloat(localStorage.getItem('dailyGoal')) || 2;
+            const weeklyGoal = parseFloat(localStorage.getItem('weeklyGoal')) || 14;
+            
+            // Calculate today's study time
+            const today = new Date().toDateString();
+            const todaySessions = studySessions.filter(session => {
+                const sessionDate = new Date(session.date).toDateString();
+                return sessionDate === today;
+            });
+            
+            const todayTime = todaySessions.reduce((total, session) => total + session.duration, 0) / 60; // Convert to hours
+            
+            // Calculate this week's study time
+            const now = new Date();
+            const startOfWeek = new Date(now);
+            startOfWeek.setDate(now.getDate() - now.getDay()); // Sunday
+            startOfWeek.setHours(0, 0, 0, 0);
+            
+            const weekSessions = studySessions.filter(session => {
+                const sessionDate = new Date(session.date);
+                return sessionDate >= startOfWeek;
+            });
+            
+            const weekTime = weekSessions.reduce((total, session) => total + session.duration, 0) / 60; // Convert to hours
+            
+            // Update progress bars
+            const dailyProgress = Math.min((todayTime / dailyGoal) * 100, 100);
+            const weeklyProgress = Math.min((weekTime / weeklyGoal) * 100, 100);
+            
+            document.getElementById('dailyProgress').style.width = ${dailyProgress}%;
+            document.getElementById('weeklyProgress').style.width = ${weeklyProgress}%;
+            
+            document.getElementById('dailyProgressText').textContent = ${Math.round(dailyProgress)}%;
+            document.getElementById('weeklyProgressText').textContent = ${Math.round(weeklyProgress)}%;
+        }
+        
+        // Stats functions
+        function updateStats() {
+            // Today's time
+            const today = new Date().toDateString();
+            const todaySessions = studySessions.filter(session => {
+                const sessionDate = new Date(session.date).toDateString();
+                return sessionDate === today;
+            });
+            
+            const todayTime = todaySessions.reduce((total, session) => total + session.duration, 0);
+            document.getElementById('todayTime').textContent = formatTime(todayTime);
+            
+            // This week's time
+            const now = new Date();
+            const startOfWeek = new Date(now);
+            startOfWeek.setDate(now.getDate() - now.getDay()); // Sunday
+            startOfWeek.setHours(0, 0, 0, 0);
+            
+            const weekSessions = studySessions.filter(session => {
+                const sessionDate = new Date(session.date);
+                return sessionDate >= startOfWeek;
+            });
+            
+            const weekTime = weekSessions.reduce((total, session) => total + session.duration, 0);
+            document.getElementById('weekTime').textContent = formatTime(weekTime);
+            
+            // Total time
+            const totalTime = studySessions.reduce((total, session) => total + session.duration, 0);
+            document.getElementById('totalTime').textContent = formatTime(totalTime);
+            
+            updateGoalProgress();
+        }
+        
+        function formatTime(minutes) {
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            return ${hours}h ${mins}m;
+        }
+        
+        function updateStudySessions() {
+            if (studySessions.length === 0) {
+                studySessionsList.innerHTML = '<div class="session-item"><span>No sessions yet</span></div>';
+                return;
+            }
+            
+            // Show only the last 5 sessions
+            const recentSessions = studySessions.slice(0, 5);
+            
+            studySessionsList.innerHTML = recentSessions.map(session => {
+                const date = new Date(session.date);
+                const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                return `
+                    <div class="session-item">
+                        <div>
+                            <div>${session.subject}</div>
+                            <div style="font-size: 0.8rem; color: #aaa;">${formattedDate}</div>
+                        </div>
+                        <div>${session.duration} min</div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Notification function
+        function showNotification(message, isAlarm = false) {
+            notificationText.textContent = message;
+            notification.classList.add('show');
+            
+            if (isAlarm) {
+                // Make alarm notifications more prominent
+                notification.style.background = 'var(--accent-red)';
+                
+                // Play sound if available
+                try {
+                    const audio = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA');
+                    audio.play().catch(e => console.log('Audio play failed:', e));
+                } catch (e) {
+                    console.log('Audio not supported');
+                }
+            }
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                notification.style.background = 'var(--spider-red)';
+            }, isAlarm ? 5000 : 3000);
+        }
+        
+        // Data persistence
+        function saveData() {
+            localStorage.setItem('studySessions', JSON.stringify(studySessions));
+            localStorage.setItem('alarms', JSON.stringify(alarms));
+        }
+        
+        function loadData() {
+            const savedSessions = localStorage.getItem('studySessions');
+            const savedAlarms = localStorage.getItem('alarms');
+            const savedDailyGoal = localStorage.getItem('dailyGoal');
+            const savedWeeklyGoal = localStorage.getItem('weeklyGoal');
+            
+            if (savedSessions) {
+                studySessions = JSON.parse(savedSessions);
+            }
+            
+            if (savedAlarms) {
+                alarms = JSON.parse(savedAlarms);
+            }
+            
+            if (savedDailyGoal) {
+                document.getElementById('dailyGoal').value = savedDailyGoal;
+            }
+            
+            if (savedWeeklyGoal) {
+                document.getElementById('weeklyGoal').value = savedWeeklyGoal;
+            }
+        }
+        
+        // Initialize the app when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

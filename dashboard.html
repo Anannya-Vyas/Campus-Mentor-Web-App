@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Mentor - Dashboard</title>
+    <style>
+        :root {
+            --spider-red: #ff0000;
+            --spider-black: #0A0A0A;
+            --spider-yellow: #ffff00;
+            --spider-pink: #ff00ff;
+            --spider-neon: #00ffff;
+            --web-gray: #1A1A1A;
+            --text-light: #F0F0F0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial Black', Arial, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(45deg, #000000, #1a0000, #000000);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: var(--text-light);
+        }
+        
+        /* Animated Spider Background */
+        .spider-bg {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        .spider {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            animation: float 6s infinite ease-in-out;
+        }
+        
+        .spider::before, .spider::after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 8px;
+            background: inherit;
+            border-radius: 4px;
+        }
+        
+        .spider::before {
+            top: 8px;
+            left: -10px;
+            transform: rotate(30deg);
+        }
+        
+        .spider::after {
+            top: 24px;
+            left: -10px;
+            transform: rotate(-30deg);
+        }
+        
+        .spider.red { 
+            background: var(--spider-red); 
+            box-shadow: 0 0 30px var(--spider-red);
+        }
+        .spider.yellow { 
+            background: var(--spider-yellow); 
+            box-shadow: 0 0 30px var(--spider-yellow);
+        }
+        .spider.pink { 
+            background: var(--spider-pink); 
+            box-shadow: 0 0 30px var(--spider-pink);
+        }
+        .spider.neon { 
+            background: var(--spider-neon); 
+            box-shadow: 0 0 30px var(--spider-neon);
+        }
+        
+        /* Spider positions */
+        .spider1 { top: 10%; left: 5%; animation-delay: 0s; }
+        .spider2 { top: 20%; right: 8%; animation-delay: 1s; }
+        .spider3 { bottom: 25%; left: 7%; animation-delay: 2s; }
+        .spider4 { top: 15%; right: 15%; animation-delay: 0.5s; }
+        .spider5 { bottom: 15%; left: 20%; animation-delay: 1.5s; }
+        .spider6 { top: 30%; left: 10%; animation-delay: 2.5s; }
+        .spider7 { bottom: 30%; right: 5%; animation-delay: 3s; }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+        
+        /* Dashboard Layout */
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
+            background: rgba(10, 10, 10, 0.95);
+            border-right: 3px solid var(--spider-red);
+            padding: 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .profile-section {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--spider-yellow);
+        }
+        
+        .profile-pic {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--spider-red), var(--spider-pink));
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            border: 3px solid var(--spider-yellow);
+            box-shadow: 0 0 20px var(--spider-red);
+        }
+        
+        .user-name {
+            color: var(--spider-yellow);
+            font-size: 22px;
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px var(--spider-yellow);
+        }
+        
+        .user-role {
+            color: var(--spider-pink);
+            font-size: 16px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .skills-section {
+            color: var(--text-light);
+            font-size: 14px;
+            background: rgba(255, 0, 0, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            border-left: 3px solid var(--spider-neon);
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 300px;
+            padding: 20px;
+        }
+        
+        /* Navigation */
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            background: rgba(0,0,0,0.9);
+            padding: 20px;
+            border-bottom: 3px solid var(--spider-red);
+            border-radius: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-btn {
+            background: linear-gradient(45deg, var(--spider-red), var(--spider-pink));
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s;
+            min-width: 150px;
+        }
+        
+        .nav-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px var(--spider-red);
+        }
+        
+        /* Facilities Dropdown */
+        .facilities-dropdown {
+            position: relative;
+        }
+        
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: rgba(10, 10, 10, 0.95);
+            min-width: 250px;
+            box-shadow: 0 0 30px var(--spider-red);
+            z-index: 1000;
+            border: 2px solid var(--spider-yellow);
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+        
+        .dropdown-content a {
+            color: var(--text-light);
+            padding: 15px 20px;
+            text-decoration: none;
+            display: block;
+            transition: all 0.3s;
+            border-bottom: 1px solid #333;
+        }
+        
+        .dropdown-content a:hover {
+            background: var(--spider-red);
+            color: black;
+            padding-left: 30px;
+        }
+        
+        .dropdown-content a:last-child {
+            border-bottom: none;
+        }
+        
+        .facilities-dropdown:hover .dropdown-content {
+            display: block;
+        }
+        
+        /* Welcome Section */
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(26, 26, 26, 0.8);
+            border-radius: 15px;
+            border: 2px solid var(--spider-yellow);
+        }
+        
+        .welcome-section h1 {
+            font-size: 48px;
+            background: linear-gradient(45deg, var(--spider-red), var(--spider-yellow), var(--spider-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+        }
+        
+        .welcome-message {
+            font-size: 20px;
+            color: var(--spider-neon);
+        }
+        
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .feature-card {
+            background: rgba(26, 26, 26, 0.9);
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid var(--spider-red);
+            transition: all 0.3s;
+            cursor: pointer;
+            text-align: center;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px var(--spider-red);
+            border-color: var(--spider-yellow);
+        }
+        
+        .feature-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+        
+        .feature-card h3 {
+            color: var(--spider-yellow);
+            margin-bottom: 10px;
+            font-size: 22px;
+        }
+        
+        .feature-card p {
+            color: #ccc;
+            line-height: 1.5;
+        }
+        
+        /* Logout Button */
+        .logout-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--spider-red);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background: var(--spider-pink);
+            transform: scale(1.1);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Spider Background -->
+    <div class="spider-bg">
+        <div class="spider red spider1"></div>
+        <div class="spider yellow spider2"></div>
+        <div class="spider pink spider3"></div>
+        <div class="spider neon spider4"></div>
+        <div class="spider red spider5"></div>
+        <div class="spider yellow spider6"></div>
+        <div class="spider pink spider7"></div>
+    </div>
+    
+    <div class="dashboard-container">
+        <!-- Left Sidebar Profile -->
+        <div class="sidebar">
+            <div class="profile-section">
+                <div class="profile-pic">👤</div>
+                <div class="user-name">{{ user.name }}</div>
+                <div class="user-role">
+                    {% if 'student_class' in user %}
+                        🎓 STUDENT - {{ user.student_class }}
+                    {% else %}
+                        👨‍🏫 TEACHER - {{ user.qualification }}
+                    {% endif %}
+                </div>
+                <div class="skills-section">
+                    {% if 'student_class' in user %}
+                        <strong>Skills I want to learn:</strong><br>
+                        Programming, Design, Marketing, Leadership
+                    {% else %}
+                        <strong>Skills I teach:</strong><br>
+                        {{ user.qualification }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Top Navigation Buttons -->
+            <div class="nav-buttons">
+                <button class="nav-btn" onclick="location.href='/spidro-chat'">
+                    🕷 Spidro Help
+                </button>
+                <button class="nav-btn" onclick="location.href='/market'">
+                    🛒 Market
+                </button>
+                <div class="facilities-dropdown">
+                    <button class="nav-btn">⚙ Facilities ▼</button>
+                    <div class="dropdown-content">
+                        <a href="/todo-list">📝 To-Do List Maker</a>
+                        <a href="/study-tracker">⏰ Study Hours + Alarm Clock</a>
+                        <a href="/mind-games">🎮 Mind Relaxing Games</a>
+                        <a href="/nutrition-ai">🍎 Nutritional AI</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Welcome Section -->
+            <div class="welcome-section">
+                <h1>Welcome to Campus Mentor!</h1>
+                <div class="welcome-message">
+                    {% if 'student_class' in user %}
+                        🎯 Ready to learn from the best campus mentors? Let's start your journey!
+                    {% else %}
+                        💡 Ready to share your knowledge and guide students? Make an impact!
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Features Grid -->
+            <div class="features-grid">
+                <div class="feature-card" onclick="location.href='/spidro-chat'">
+                    <div class="feature-icon">🕷</div>
+                    <h3>Spidro AI Assistant</h3>
+                    <p>Get instant help with your questions from our friendly spider AI. 24/7 support for all your campus needs.</p>
+                </div>
+                
+                <div class="feature-card" onclick="location.href='/market'">
+                    <div class="feature-icon">🛒</div>
+                    <h3>Campus Market</h3>
+                    <p>Buy, sell, and trade books, notes, equipment and campus essentials with fellow students.</p>
+                </div>
+                
+                <div class="feature-card" onclick="location.href='/todo-list'">
+                    <div class="feature-icon">📝</div>
+                    <h3>Smart To-Do List</h3>
+                    <p>Organize your tasks, assignments, and deadlines with our spider-web inspired task manager.</p>
+                </div>
+                
+                <div class="feature-card" onclick="location.href='/study-tracker'">
+                    <div class="feature-icon">⏰</div>
+                    <h3>Study Tracker & Alarm</h3>
+                    <p>Track your study hours, set reminders, and manage your time effectively with smart alarms.</p>
+                </div>
+                
+                <div class="feature-card" onclick="location.href='/mind-games'">
+                    <div class="feature-icon">🎮</div>
+                    <h3>Mind Relaxing Games</h3>
+                    <p>Take breaks with fun spider-themed games to refresh your mind and reduce stress.</p>
+                </div>
+                
+                <div class="feature-card" onclick="location.href='/nutrition-ai'">
+                    <div class="feature-icon">🍎</div>
+                    <h3>Nutrition AI Assistant</h3>
+                    <p>Get personalized health and nutrition advice to maintain your wellness during campus life.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Logout Button -->
+    <button class="logout-btn" onclick="location.href='/logout'">🚪 Logout</button>
+
+    <script>
+        // Add interactive spider animations
+        document.addEventListener('mousemove', (e) => {
+            const spiders = document.querySelectorAll('.spider');
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+            
+            spiders.forEach((spider, index) => {
+                const speed = (index + 1) * 0.0001;
+                const x = (mouseX - 0.5) * 50 * speed;
+                const y = (mouseY - 0.5) * 50 * speed;
+                
+                spider.style.transform = translate(${x}px, ${y}px);
+            });
+        });
+
+        // Dropdown functionality
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.facilities-dropdown')) {
+                document.querySelectorAll('.dropdown-content').forEach(dropdown => {
+                    dropdown.style.display = 'none';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
